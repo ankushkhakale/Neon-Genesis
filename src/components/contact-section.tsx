@@ -1,0 +1,179 @@
+
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Reveal } from './ui/reveal';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { useToast } from './ui/use-toast';
+
+export function ContactSection() {
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate form submission
+    setTimeout(() => {
+      setIsSubmitting(false);
+      toast({
+        title: "Message sent!",
+        description: "We'll get back to you soon.",
+        duration: 5000,
+      });
+      
+      // Reset form
+      (e.target as HTMLFormElement).reset();
+    }, 1500);
+  };
+
+  return (
+    <section id="contact" className="py-24">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="text-center mb-16">
+          <Reveal>
+            <span className="inline-block text-sm font-semibold text-accent uppercase tracking-wider">
+              Get In Touch
+            </span>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <h2 className="mt-2 text-3xl md:text-4xl font-bold">
+              Let's <span className="text-gradient">Connect</span>
+            </h2>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Have a project in mind or want to learn more about our services? 
+              Reach out to us and let's create something amazing together.
+            </p>
+          </Reveal>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="space-y-8">
+            <Reveal>
+              <div className="flex items-start space-x-4">
+                <div className="mt-1 w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-accent">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium">Email Us</h3>
+                  <p className="mt-1 text-muted-foreground">hello@aestheticwave.com</p>
+                  <p className="mt-1 text-muted-foreground">support@aestheticwave.com</p>
+                </div>
+              </div>
+            </Reveal>
+            
+            <Reveal delay={0.1}>
+              <div className="flex items-start space-x-4">
+                <div className="mt-1 w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-accent">
+                  <Phone className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium">Call Us</h3>
+                  <p className="mt-1 text-muted-foreground">+1 (555) 123-4567</p>
+                  <p className="mt-1 text-muted-foreground">+1 (555) 987-6543</p>
+                </div>
+              </div>
+            </Reveal>
+            
+            <Reveal delay={0.2}>
+              <div className="flex items-start space-x-4">
+                <div className="mt-1 w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center text-accent">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium">Visit Us</h3>
+                  <p className="mt-1 text-muted-foreground">
+                    123 Design Street, Creative District
+                    <br />
+                    San Francisco, CA 94107
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+            
+            <Reveal delay={0.3}>
+              <div className="mt-8 p-6 bg-secondary/50 rounded-lg border">
+                <h3 className="text-lg font-medium mb-4">Office Hours</h3>
+                <ul className="space-y-2">
+                  <li className="flex justify-between">
+                    <span className="text-muted-foreground">Monday - Friday:</span>
+                    <span>9:00 AM - 6:00 PM</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="text-muted-foreground">Saturday:</span>
+                    <span>10:00 AM - 4:00 PM</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="text-muted-foreground">Sunday:</span>
+                    <span>Closed</span>
+                  </li>
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+          
+          <Reveal className="w-full" delay={0.2}>
+            <form onSubmit={handleSubmit} className="space-y-6 p-6 bg-background rounded-lg border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium">
+                    Name
+                  </label>
+                  <Input id="name" placeholder="Your name" required />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium">
+                    Email
+                  </label>
+                  <Input id="email" type="email" placeholder="Your email" required />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="subject" className="text-sm font-medium">
+                  Subject
+                </label>
+                <Input id="subject" placeholder="How can we help you?" required />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="message" className="text-sm font-medium">
+                  Message
+                </label>
+                <Textarea 
+                  id="message" 
+                  placeholder="Your message..." 
+                  rows={5} 
+                  required 
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <motion.div
+                      className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                      animate={{ rotate: 360 }}
+                      transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                    />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    Send Message <Send className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </form>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
