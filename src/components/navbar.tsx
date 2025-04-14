@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Menu, X, Code, Brain, MessageSquare } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 
 const NavLink = ({ href, text }: { href: string; text: string }) => {
   return (
@@ -31,6 +31,14 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const closeMenu = () => {
+    setIsOpen(false);
+  };
+
   return (
     <header className={`fixed top-0 w-full z-50 transition-all duration-300 
       ${scrolled ? 'glassmorphism py-3' : 'bg-transparent py-5'}`}>
@@ -41,9 +49,9 @@ export function Navbar() {
           transition={{ duration: 0.5 }}
           className="flex items-center"
         >
-          <Link to="/" className="text-xl md:text-2xl font-bold neon-text">
+          <RouterLink to="/" className="text-xl md:text-2xl font-bold neon-text">
             NEON<span className="text-secondary">GENESIS</span>
-          </Link>
+          </RouterLink>
         </motion.div>
 
         {/* Desktop Nav */}
@@ -58,11 +66,11 @@ export function Navbar() {
           <NavLink href="#services" text="Services" />
           <NavLink href="#portfolio" text="Projects" />
           <NavLink href="#contact" text="Contact" />
-          <Link to="/team">
+          <RouterLink to="/team" onClick={closeMenu}>
             <Button variant="outline" className="border-accent/50 hover:border-accent hover:bg-accent/10">
               Our Team
             </Button>
-          </Link>
+          </RouterLink>
         </motion.nav>
 
         {/* Mobile Menu Button */}
@@ -70,7 +78,7 @@ export function Navbar() {
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={toggleMenu}
             className="text-foreground" 
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -93,11 +101,11 @@ export function Navbar() {
             <NavLink href="#services" text="Services" />
             <NavLink href="#portfolio" text="Projects" />
             <NavLink href="#contact" text="Contact" />
-            <Link to="/team" className="w-full">
+            <RouterLink to="/team" onClick={closeMenu} className="w-full">
               <Button variant="outline" className="w-full border-accent/50 hover:border-accent hover:bg-accent/10">
                 Our Team
               </Button>
-            </Link>
+            </RouterLink>
           </div>
         </motion.div>
       )}

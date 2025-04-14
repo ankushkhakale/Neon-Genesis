@@ -20,7 +20,30 @@ const Index = () => {
       setLoading(false);
     }, 2000);
 
-    return () => clearTimeout(timer);
+    // Add smooth scrolling for anchor links
+    const handleAnchorClick = (e) => {
+      const target = e.target.closest('a');
+      if (!target) return;
+      
+      const href = target.getAttribute('href');
+      if (!href || !href.startsWith('#')) return;
+      
+      e.preventDefault();
+      const element = document.getElementById(href.substring(1));
+      if (!element) return;
+      
+      window.scrollTo({
+        top: element.offsetTop - 80, // Offset for fixed header
+        behavior: 'smooth'
+      });
+    };
+
+    document.addEventListener('click', handleAnchorClick);
+    
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('click', handleAnchorClick);
+    };
   }, []);
 
   return (
@@ -29,13 +52,24 @@ const Index = () => {
         {loading && <Loader />}
       </AnimatePresence>
 
-      <main className="min-h-screen">
+      <main className="min-h-screen relative">
+        <div className="absolute inset-0 cyberpunk-grid opacity-20"></div>
         <Navbar />
-        <Hero />
-        <AboutSection />
-        <ServicesSection />
-        <PortfolioSection />
-        <ContactSection />
+        <div id="home">
+          <Hero />
+        </div>
+        <div id="about">
+          <AboutSection />
+        </div>
+        <div id="services">
+          <ServicesSection />
+        </div>
+        <div id="portfolio">
+          <PortfolioSection />
+        </div>
+        <div id="contact">
+          <ContactSection />
+        </div>
         <Footer />
       </main>
     </>
