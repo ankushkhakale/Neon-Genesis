@@ -10,15 +10,26 @@ import { PortfolioSection } from '@/components/portfolio-section';
 import { ContactSection } from '@/components/contact-section';
 import { Footer } from '@/components/footer';
 import { Loader } from '@/components/loader';
+import { toast } from '@/hooks/use-toast';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
+  const [contentLoaded, setContentLoaded] = useState(false);
 
   useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
+    // Simulate content loading
+    const contentTimer = setTimeout(() => {
+      setContentLoaded(true);
+    }, 1000);
+    
+    // Simulate loading time with a slightly longer delay
+    const loadingTimer = setTimeout(() => {
       setLoading(false);
-    }, 2000);
+      toast({
+        title: "Welcome to Neon Genesis",
+        description: "Explore our digital realm and discover our projects.",
+      });
+    }, 2500);
 
     // Add smooth scrolling for anchor links
     const handleAnchorClick = (e) => {
@@ -47,7 +58,8 @@ const Index = () => {
     });
     
     return () => {
-      clearTimeout(timer);
+      clearTimeout(contentTimer);
+      clearTimeout(loadingTimer);
       document.removeEventListener('click', handleAnchorClick);
     };
   }, []);
@@ -58,7 +70,7 @@ const Index = () => {
         {loading && <Loader />}
       </AnimatePresence>
 
-      <main className="min-h-screen relative">
+      <main className={`min-h-screen relative ${!contentLoaded ? 'opacity-0' : 'opacity-100 transition-opacity duration-500'}`}>
         <div className="absolute inset-0 cyberpunk-grid opacity-20"></div>
         <Navbar />
         <div id="home">

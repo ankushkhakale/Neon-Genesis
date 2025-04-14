@@ -1,5 +1,6 @@
 
 import { motion } from 'framer-motion';
+import { Code, Cpu } from 'lucide-react';
 
 export function Loader() {
   return (
@@ -29,22 +30,76 @@ export function Loader() {
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
           />
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Cpu className="w-8 h-8 text-accent animate-pulse" />
+          </motion.div>
         </motion.div>
         <motion.h2 
-          className="mt-6 text-xl font-bold text-[#8B5CF6]"
+          className="mt-6 text-xl font-bold text-gradient glitch-text"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
+          data-text="NEON GENESIS"
         >
           NEON GENESIS
         </motion.h2>
         <motion.div
-          className="mt-2 text-[#0EA5E9] text-sm"
+          className="mt-2 text-[#0EA5E9] text-sm font-mono"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          System Initializing...
+          <motion.div
+            animate={{
+              opacity: [0, 1, 1, 0],
+              transition: { repeat: Infinity, duration: 2 }
+            }}
+          >
+            System Initializing<span className="dots">...</span>
+          </motion.div>
+        </motion.div>
+        
+        <motion.div 
+          className="mt-6 flex space-x-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          <motion.div 
+            className="h-1 w-16 bg-primary/30 rounded-full overflow-hidden"
+          >
+            <motion.div 
+              className="h-full bg-primary"
+              initial={{ width: 0 }}
+              animate={{ width: "100%" }}
+              transition={{ duration: 2 }}
+            />
+          </motion.div>
+          <motion.div 
+            className="h-1 w-16 bg-secondary/30 rounded-full overflow-hidden"
+          >
+            <motion.div 
+              className="h-full bg-secondary"
+              initial={{ width: 0 }}
+              animate={{ width: "100%" }}
+              transition={{ duration: 1.7, delay: 0.3 }}
+            />
+          </motion.div>
+          <motion.div 
+            className="h-1 w-16 bg-accent/30 rounded-full overflow-hidden"
+          >
+            <motion.div 
+              className="h-full bg-accent"
+              initial={{ width: 0 }}
+              animate={{ width: "100%" }}
+              transition={{ duration: 1.5, delay: 0.6 }}
+            />
+          </motion.div>
         </motion.div>
       </motion.div>
     </div>

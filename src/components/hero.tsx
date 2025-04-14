@@ -1,10 +1,24 @@
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { AnimatedText } from './ui/animated-text';
 import { ArrowRight, Code, Terminal, Cpu } from 'lucide-react';
+import { JoinTeamModal } from './join-team-modal';
 
 export function Hero() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const scrollToPortfolio = () => {
+    const element = document.getElementById('portfolio');
+    if (!element) return;
+    
+    window.scrollTo({
+      top: element.offsetTop - 80,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <section id="home" className="min-h-screen flex items-center justify-center pt-20 pb-16 relative overflow-hidden">
       {/* Background grid */}
@@ -54,7 +68,7 @@ export function Hero() {
               >
                 <Code className="inline mr-1 w-4 h-4" /> Passionate Developers
               </motion.span>
-              <h1 className="font-bold neon-text">
+              <h1 className="font-bold neon-text text-glitch" data-text="WHERE CODE MEETS CREATIVITY">
                 <AnimatedText
                   text="WHERE CODE MEETS CREATIVITY"
                   className="leading-tight"
@@ -73,11 +87,20 @@ export function Hero() {
               transition={{ duration: 0.6, delay: 0.6 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <Button size="lg" className="group bg-accent hover:bg-accent/90 neon-border animate-pulse-glow">
+              <Button 
+                size="lg" 
+                className="group bg-accent hover:bg-accent/90 neon-border animate-pulse-glow"
+                onClick={scrollToPortfolio}
+              >
                 Explore Projects
                 <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button size="lg" variant="outline" className="border-accent/50 hover:border-accent hover:bg-accent/10">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-accent/50 hover:border-accent hover:bg-accent/10"
+                onClick={() => setIsModalOpen(true)}
+              >
                 Join Our Team
               </Button>
             </motion.div>
@@ -127,6 +150,12 @@ export function Hero() {
           </motion.div>
         </div>
       </div>
+      
+      {/* Join Team Modal */}
+      <JoinTeamModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 }
