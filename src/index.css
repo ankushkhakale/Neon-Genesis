@@ -52,26 +52,27 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-family: 'Rajdhani', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight;
-    font-family: 'Orbitron', sans-serif;
+    @apply font-heading tracking-wider uppercase;
   }
 
   h1 {
-    @apply text-4xl sm:text-5xl md:text-6xl;
+    @apply text-4xl sm:text-5xl md:text-6xl font-bold;
+    letter-spacing: 0.05em;
   }
 
   h2 {
-    @apply text-3xl sm:text-4xl md:text-5xl;
+    @apply text-3xl sm:text-4xl md:text-5xl font-bold;
+    letter-spacing: 0.04em;
   }
 
   h3 {
-    @apply text-2xl sm:text-3xl;
+    @apply text-2xl sm:text-3xl font-bold;
+    letter-spacing: 0.03em;
   }
 
   .hover-underline {
@@ -79,7 +80,28 @@
   }
   
   .text-gradient {
-    @apply bg-gradient-to-r from-accent via-secondary to-primary bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-accent via-secondary to-primary bg-clip-text text-transparent bg-300% animate-text-shift;
+  }
+
+  .text-glitch {
+    @apply relative;
+    text-shadow: 2px 2px 0px rgba(139, 92, 246, 0.5), -2px -2px 0px rgba(96, 165, 250, 0.5);
+  }
+
+  .text-glitch::before,
+  .text-glitch::after {
+    @apply absolute top-0 left-0 w-full opacity-70;
+    content: attr(data-text);
+  }
+
+  .text-glitch::before {
+    @apply text-accent -translate-x-[2px] -translate-y-[2px];
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  }
+
+  .text-glitch::after {
+    @apply text-secondary translate-x-[2px] translate-y-[2px];
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
   }
 
   .neon-border {
@@ -87,7 +109,17 @@
   }
 
   .neon-text {
-    @apply text-accent drop-shadow-[0_0_8px_rgba(139,92,246,0.8)];
+    @apply text-accent font-heading tracking-wider;
+    text-shadow: 0 0 8px rgba(139, 92, 246, 0.8), 0 0 12px rgba(139, 92, 246, 0.6);
+  }
+
+  .heading-slashed {
+    @apply relative font-heading;
+  }
+
+  .heading-slashed::before {
+    content: '/>';
+    @apply text-accent mr-2 font-mono;
   }
 
   .glassmorphism {
@@ -100,27 +132,14 @@
       linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
     background-size: 40px 40px;
   }
-}
 
-@font-face {
-  font-family: 'Orbitron';
-  font-style: normal;
-  font-weight: 400 900;
-  font-display: swap;
-  src: url(https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap);
-}
-
-@font-face {
-  font-family: 'Rajdhani';
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url(https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap);
-}
-
-html {
-  font-family: 'Rajdhani', sans-serif;
-  scroll-behavior: smooth;
+  .mono-code {
+    @apply font-mono tracking-wide;
+  }
+  
+  .bg-300% {
+    background-size: 300% 300%;
+  }
 }
 
 /* Animation Classes */

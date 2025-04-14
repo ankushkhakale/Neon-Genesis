@@ -13,6 +13,12 @@ const NotFound = () => {
       "404 Error: User attempted to access non-existent route:",
       location.pathname
     );
+    
+    // Apply glitch effect to text elements
+    const glitchElements = document.querySelectorAll('.text-glitch');
+    glitchElements.forEach(el => {
+      el.setAttribute('data-text', el.textContent || '');
+    });
   }, [location.pathname]);
 
   return (
@@ -29,7 +35,8 @@ const NotFound = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          className="text-6xl md:text-7xl font-bold neon-text animate-pulse-glow mb-6"
+          className="text-6xl md:text-8xl font-heading font-bold text-glitch animate-pulse-glow mb-6"
+          data-text="404"
         >
           404
         </motion.h1>
@@ -38,9 +45,9 @@ const NotFound = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="text-xl text-gradient mb-8"
+          className="text-xl font-accent tracking-widest text-gradient mb-8"
         >
-          Signal Lost. Transmission not found.
+          SIGNAL LOST. TRANSMISSION NOT FOUND.
         </motion.p>
         
         <motion.div
@@ -48,14 +55,14 @@ const NotFound = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.8 }}
         >
-          <p className="mb-8 text-muted-foreground">
-            The page you're looking for has either been moved to another dimension or doesn't exist in this reality.
+          <p className="mb-8 text-muted-foreground font-mono text-sm">
+            &gt; The page you're looking for has either been moved to another dimension or doesn't exist in this reality.
           </p>
           
           <Link to="/">
             <Button 
               variant="outline" 
-              className="border-accent/50 hover:border-accent hover:bg-accent/10"
+              className="border-accent/50 hover:border-accent hover:bg-accent/10 font-mono tracking-wide"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Return to Home Base

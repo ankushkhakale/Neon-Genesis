@@ -40,6 +40,12 @@ const Index = () => {
 
     document.addEventListener('click', handleAnchorClick);
     
+    // Apply glitch effect to text elements
+    const glitchElements = document.querySelectorAll('.text-glitch');
+    glitchElements.forEach(el => {
+      el.setAttribute('data-text', el.textContent || '');
+    });
+    
     return () => {
       clearTimeout(timer);
       document.removeEventListener('click', handleAnchorClick);

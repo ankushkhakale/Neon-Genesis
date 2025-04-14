@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,6 +18,13 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'heading': ['Audiowide', 'Syncopate', 'sans-serif'],
+				'display': ['Exo 2', 'sans-serif'],
+				'mono': ['Share Tech Mono', 'Syne Mono', 'monospace'],
+				'accent': ['Teko', 'sans-serif'],
+				'body': ['Exo 2', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -102,7 +108,7 @@ export default {
 					'0%': { transform: 'translateX(0)' },
 					'100%': { transform: 'translateX(-100%)' }
 				},
-				wiggle: {
+				'wiggle': {
 					'0%, 100%': { transform: 'rotate(-3deg)' },
 					'50%': { transform: 'rotate(3deg)' },
 				},
@@ -132,6 +138,17 @@ export default {
 					'60%': { transform: 'rotate(0.0deg)' },
 					'100%': { transform: 'rotate(0.0deg)' },
 				},
+				'glitch': {
+					'0%, 100%': { transform: 'translate(0)' },
+					'20%': { transform: 'translate(-5px, 5px)' },
+					'40%': { transform: 'translate(-5px, -5px)' },
+					'60%': { transform: 'translate(5px, 5px)' },
+					'80%': { transform: 'translate(5px, -5px)' },
+				},
+				'text-shift': {
+					'0%, 100%': { 'background-position': '0% 50%' },
+					'50%': { 'background-position': '100% 50%' },
+				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -146,6 +163,8 @@ export default {
 				'scale-down': 'scale-down 0.5s ease-out',
 				'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 				'wave': 'wave 2s linear infinite',
+				'glitch': 'glitch 0.5s ease-in-out infinite alternate',
+				'text-shift': 'text-shift 5s ease infinite',
 			}
 		}
 	},
