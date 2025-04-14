@@ -1,25 +1,47 @@
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 
 interface AnimatedTextProps {
   text: string;
   className?: string;
   once?: boolean;
+  delay?: number;
+  staggerChildren?: number;
+  highlightIndices?: number[];
 }
 
 export function AnimatedText({
   text,
   className = '',
   once = false,
+  delay = 0,
+  staggerChildren = 0.04,
+  highlightIndices = [],
 }: AnimatedTextProps) {
   const words = text.split(' ');
+  const controls = useAnimation();
+
+  useEffect(() => {
+    const startAnimation = async () => {
+      await controls.start("hidden");
+      await controls.start("visible");
+    };
+
+    if (!once) {
+      const interval = setInterval(startAnimation, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [controls, once]);
 
   const container = {
     hidden: { opacity: 0 },
     visible: (i = 1) => ({
       opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: 0.04 * i },
+      transition: { 
+        staggerChildren: staggerChildren, 
+        delayChildren: delay 
+      },
     }),
   };
 
@@ -49,18 +71,22 @@ export function AnimatedText({
       className={`w-full mx-auto flex flex-wrap ${className}`}
       variants={container}
       initial="hidden"
-      whileInView="visible"
+      animate={once ? "visible" : controls}
       viewport={{ once }}
     >
-      {words.map((word, index) => (
-        <motion.span
-          key={index}
-          className="mr-1.5"
-          variants={child}
-        >
-          {word}
-        </motion.span>
-      ))}
+      {words.map((word, index) => {
+        const isHighlighted = highlightIndices.includes(index);
+        
+        return (
+          <motion.span
+            key={index}
+            className={`mr-1.5 ${isHighlighted ? 'text-accent' : ''}`}
+            variants={child}
+          >
+            {word}
+          </motion.span>
+        );
+      })}
     </motion.div>
   );
 }
