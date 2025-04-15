@@ -10,17 +10,17 @@ import { Github, Linkedin, Twitter, Code, Brain, Palette, MessageSquare } from '
 
 const teamMembers = [
   {
-    name: "Alex Reeves",
+    name: "Ankush Khakale",
     role: "Full-Stack Developer",
-    image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&q=80&w=1760",
+    image: "https://media.licdn.com/dms/image/v2/D4E03AQFhFPMKUIyaBw/profile-displayphoto-shrink_400_400/B4EZTFsYjtGYAg-/0/1738483536336?e=1750291200&v=beta&t=NlQIL1l_IOqbN4A0iK8KZDnqK1eGbT_acR6Kf8jxhyQ",
     specialty: "React, Node.js, GraphQL",
     bio: "Passionate about creating elegant solutions to complex problems. When not coding, Alex enjoys competitive gaming and mountain biking.",
-    skills: ["React", "Node.js", "GraphQL", "TypeScript", "AWS"],
+    skills: ["React", "Node.js", "Python", "GenAI", "Google Cloud"],
     icon: <Code className="w-5 h-5" />,
     links: {
-      github: "#",
-      linkedin: "#",
-      twitter: "#"
+      github: "https://github.com/ankushkhakale/",
+      linkedin: "https://www.linkedin.com/in/ankush-khakale-45423a324/",
+      twitter: "https://x.com/Stoic_Ankush"
     }
   },
   {
