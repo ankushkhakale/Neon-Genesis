@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Reveal } from './ui/reveal';
@@ -20,7 +19,7 @@ const projects = [
     id: 1,
     title: "Modern E-commerce Platform",
     category: "Web Design",
-    image: "https://images.unsplash.com/photo-1550399105-c4db5fb85c18?auto=format&fit=crop&q=80&w=2071",
+    image: "https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&q=80&w=2036",
     description: "A fully responsive e-commerce platform with advanced filtering and payment integration.",
     link: "#"
   },
@@ -28,7 +27,7 @@ const projects = [
     id: 2,
     title: "Fitness Tracking Mobile App",
     category: "Mobile App",
-    image: "https://images.unsplash.com/photo-1556656793-08538906a9f8?auto=format&fit=crop&q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&q=80&w=2070",
     description: "Track your workouts, nutrition, and progress with this comprehensive fitness application.",
     link: "#"
   },
@@ -36,7 +35,7 @@ const projects = [
     id: 3,
     title: "Corporate Brand Identity",
     category: "Branding",
-    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=80&w=2070",
     description: "Complete brand identity including logo design, color palette, and brand guidelines.",
     link: "#"
   },
@@ -44,7 +43,7 @@ const projects = [
     id: 4,
     title: "Travel Booking Website",
     category: "Web Design",
-    image: "https://images.unsplash.com/photo-1549715173-3bfc3c637f74?auto=format&fit=crop&q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=2074",
     description: "An intuitive travel booking platform with destination suggestions and user reviews.",
     link: "#"
   },
@@ -52,7 +51,7 @@ const projects = [
     id: 5,
     title: "Food Delivery App",
     category: "Mobile App",
-    image: "https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&q=80&w=2036",
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=2070",
     description: "Order food from local restaurants with real-time delivery tracking and notifications.",
     link: "#"
   },
@@ -60,7 +59,7 @@ const projects = [
     id: 6,
     title: "Photography Portfolio",
     category: "Web Design",
-    image: "https://images.unsplash.com/photo-1569012871812-f38ee64cd54c?auto=format&fit=crop&q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=2070",
     description: "Showcase of professional photography with gallery views and client testimonials.",
     link: "#"
   }
@@ -115,7 +114,6 @@ export function PortfolioSection() {
         </div>
 
         {isMobile ? (
-          // Mobile view - Vertical scrolling grid
           <AnimatePresence mode="wait">
             <motion.div
               key={activeCategory}
@@ -131,7 +129,6 @@ export function PortfolioSection() {
             </motion.div>
           </AnimatePresence>
         ) : (
-          // Desktop view - Carousel
           <Reveal>
             <Carousel className="w-full">
               <CarouselContent className="-ml-2 md:-ml-4">

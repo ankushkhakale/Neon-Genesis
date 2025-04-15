@@ -47,7 +47,7 @@ export function AboutSection() {
             >
               <div className="glassmorphism p-1 neon-border animate-pulse-glow">
                 <img
-                  src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=1974"
+                  src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=1974"
                   alt="Team of developers coding"
                   className="w-full h-auto rounded-lg"
                 />

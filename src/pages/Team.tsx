@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -13,7 +12,7 @@ const teamMembers = [
   {
     name: "Alex Reeves",
     role: "Full-Stack Developer",
-    image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=1760",
+    image: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&q=80&w=1760",
     specialty: "React, Node.js, GraphQL",
     bio: "Passionate about creating elegant solutions to complex problems. When not coding, Alex enjoys competitive gaming and mountain biking.",
     skills: ["React", "Node.js", "GraphQL", "TypeScript", "AWS"],
@@ -27,7 +26,7 @@ const teamMembers = [
   {
     name: "Maya Chen",
     role: "AI/ML Engineer",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=1974",
+    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1974",
     specialty: "TensorFlow, PyTorch, NLP",
     bio: "Fascinated by the possibilities of machine learning. Maya specializes in creating intelligent solutions that push technology forward.",
     skills: ["TensorFlow", "PyTorch", "Python", "NLP", "Computer Vision"],
@@ -41,7 +40,7 @@ const teamMembers = [
   {
     name: "Jordan Williams",
     role: "UI/UX Designer",
-    image: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&q=80&w=1760",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1760",
     specialty: "User Experience, Interaction Design",
     bio: "Creating beautiful and intuitive interfaces is Jordan's passion. Always focused on enhancing the human-computer interaction experience.",
     skills: ["Figma", "Adobe XD", "User Research", "Prototyping", "Design Systems"],
@@ -55,7 +54,7 @@ const teamMembers = [
   {
     name: "Sarah Johnson",
     role: "DevOps Specialist",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=1961",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1961",
     specialty: "CI/CD, Kubernetes, Docker",
     bio: "Streamlining development processes and ensuring smooth deployments. Sarah is passionate about automation and infrastructure as code.",
     skills: ["Kubernetes", "Docker", "AWS", "CI/CD", "Terraform"],
@@ -69,7 +68,7 @@ const teamMembers = [
   {
     name: "Kevin Park",
     role: "Technical Lead",
-    image: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=1974",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1974",
     specialty: "Architecture, Team Leadership",
     bio: "With over a decade of experience, Kevin guides the technical direction of the team while fostering a culture of continuous learning.",
     skills: ["System Architecture", "Leadership", "Mentoring", "Full-Stack", "Strategy"],
@@ -83,7 +82,7 @@ const teamMembers = [
   {
     name: "Olivia Martinez",
     role: "Community Manager",
-    image: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&q=80&w=1740",
+    image: "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&q=80&w=1740",
     specialty: "Developer Relations, Communication",
     bio: "Building bridges between the team and the community. Olivia ensures our work is accessible and our message is clear.",
     skills: ["Communication", "Content Creation", "Event Management", "Social Media", "Technical Writing"],
@@ -181,7 +180,6 @@ const Team = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading time
     const timer = setTimeout(() => {
       setLoading(false);
     }, 2000);
