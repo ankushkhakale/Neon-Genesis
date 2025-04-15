@@ -113,18 +113,22 @@ const TeamMemberCard = ({ member, index }) => {
               </div>
               
               <HoverCard>
-                <HoverCardTrigger>
+                <HoverCardTrigger asChild>
                   <p className="text-sm text-muted-foreground mb-4 cursor-help border-b border-dashed border-muted-foreground inline-block">
                     {member.specialty}
                   </p>
                 </HoverCardTrigger>
-                <HoverCardContent className="glassmorphism bg-black/80 border-accent/20 w-80">
-                  <div className="space-y-2">
+                <HoverCardContent 
+                  side="top"
+                  align="start"
+                  className="glassmorphism bg-black/95 border-accent/30 w-80 z-50 shadow-xl shadow-accent/20"
+                >
+                  <div className="space-y-3 p-1">
                     <h4 className="text-sm font-semibold text-accent">Expertise Areas</h4>
                     <p className="text-xs text-muted-foreground">{member.bio}</p>
                     <div className="flex flex-wrap gap-1 mt-2">
                       {member.skills.map((skill, i) => (
-                        <span key={i} className="text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">{skill}</span>
+                        <span key={i} className="text-xs bg-accent/30 text-accent px-2 py-1 rounded-full">{skill}</span>
                       ))}
                     </div>
                   </div>
@@ -259,4 +263,3 @@ const Team = () => {
 };
 
 export default Team;
-
