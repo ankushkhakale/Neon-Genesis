@@ -13,7 +13,7 @@ const teamMembers = [
     name: "Ankush Khakale",
     role: "Full-Stack Developer",
     image: "https://media.licdn.com/dms/image/v2/D4E03AQFhFPMKUIyaBw/profile-displayphoto-shrink_400_400/B4EZTFsYjtGYAg-/0/1738483536336?e=1750291200&v=beta&t=NlQIL1l_IOqbN4A0iK8KZDnqK1eGbT_acR6Kf8jxhyQ",
-    specialty: "React, Node.js, GraphQL",
+    specialty: "React, GenAI, Python",
     bio: "Passionate about creating elegant solutions to complex problems. When not coding, Alex enjoys competitive gaming and mountain biking.",
     skills: ["React", "Node.js", "Python", "GenAI", "Google Cloud"],
     icon: <Code className="w-5 h-5" />,
