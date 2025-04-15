@@ -13,8 +13,8 @@ const teamMembers = [
     name: "Ankush Khakale",
     role: "Full-Stack Developer",
     image: "https://media.licdn.com/dms/image/v2/D4E03AQFhFPMKUIyaBw/profile-displayphoto-shrink_400_400/B4EZTFsYjtGYAg-/0/1738483536336?e=1750291200&v=beta&t=NlQIL1l_IOqbN4A0iK8KZDnqK1eGbT_acR6Kf8jxhyQ",
-    specialty: "React, Node.js, GraphQL",
-    bio: "Passionate about creating elegant solutions to complex problems. When not coding, Alex enjoys competitive gaming and mountain biking.",
+    specialty: "React, GenAI, Python",
+    bio: "Passionate about creating elegant solutions to complex problems. When not coding, Ankush enjoys competitive gaming and mountain biking.",
     skills: ["React", "Node.js", "Python", "GenAI", "Google Cloud"],
     icon: <Code className="w-5 h-5" />,
     links: {
@@ -24,72 +24,58 @@ const teamMembers = [
     }
   },
   {
-    name: "Maya Chen",
-    role: "AI/ML Engineer",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1974",
-    specialty: "TensorFlow, PyTorch, NLP",
-    bio: "Fascinated by the possibilities of machine learning. Maya specializes in creating intelligent solutions that push technology forward.",
-    skills: ["TensorFlow", "PyTorch", "Python", "NLP", "Computer Vision"],
+    name: "Atharva Jangale",
+    role: "AI/ML Enthusiast",
+    image: "https://media.licdn.com/dms/image/v2/D5622AQHKkP1EdMlD9A/feedshare-shrink_1280/B56ZThx9BxGoAs-/0/1738954758452?e=1747872000&v=beta&t=O61CCY5eFQ9chQvueuf6hNwo-IBdPQk5EHGeq-_-RHQ",
+    specialty: "MCP, Google Cloud, NLP",
+    bio: "Fascinated by the possibilities of machine learning. Atharva specializes in creating intelligent solutions that push technology forward.",
+    skills: ["TensorFlow", "Python", "IoT", "NLP", "API"],
     icon: <Brain className="w-5 h-5" />,
     links: {
       github: "#",
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/atharva-jangale/",
       twitter: "#"
     }
   },
   {
-    name: "Jordan Williams",
-    role: "UI/UX Designer",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1760",
-    specialty: "User Experience, Interaction Design",
-    bio: "Creating beautiful and intuitive interfaces is Jordan's passion. Always focused on enhancing the human-computer interaction experience.",
-    skills: ["Figma", "Adobe XD", "User Research", "Prototyping", "Design Systems"],
+    name: "Atharva Jondhale",
+    role: "UI/UX Designer & DBMS",
+    image: "https://media.licdn.com/dms/image/v2/D4E03AQE2qIAJH-4XPQ/profile-displayphoto-shrink_400_400/B4EZQ1eV.ZHEAg-/0/1736063935636?e=1750291200&v=beta&t=srCkypWWKhPx2iBPlyuYsCzxqzXsXJ4k7dFOfrVyO_k",
+    specialty: "Database Management, Interaction Design",
+    bio: "Creating beautiful and intuitive interfaces is Jordan's passion. He plays an important role in Database Management for the team.",
+    skills: ["NoSQL", "Figma", "C#", "Prototyping", "Design Systems"],
     icon: <Palette className="w-5 h-5" />,
     links: {
       github: "#",
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/atharva-jondhale-8886b8344/",
       twitter: "#"
     }
   },
   {
-    name: "Sarah Johnson",
-    role: "DevOps Specialist",
+    name: "Shravani Bharambe",
+    role: "Frontend Developer ",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1961",
-    specialty: "CI/CD, Kubernetes, Docker",
-    bio: "Streamlining development processes and ensuring smooth deployments. Sarah is passionate about automation and infrastructure as code.",
-    skills: ["Kubernetes", "Docker", "AWS", "CI/CD", "Terraform"],
+    specialty: "User Interface, Python, DSA",
+    bio: "Creating stunning impactful front-end websites. Shravani is passionate about new techs and infrastructure as code.",
+    skills: ["Communication", "React", "NodeJS", "Leadership"],
     icon: <Code className="w-5 h-5" />,
     links: {
       github: "#",
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/shravani-bharambe-74809631b/",
       twitter: "#"
     }
   },
   {
-    name: "Kevin Park",
-    role: "Technical Lead",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=1974",
-    specialty: "Architecture, Team Leadership",
-    bio: "With over a decade of experience, Kevin guides the technical direction of the team while fostering a culture of continuous learning.",
-    skills: ["System Architecture", "Leadership", "Mentoring", "Full-Stack", "Strategy"],
+    name: "Mahima Chaudhari",
+    role: "UI-UX Designer",
+    image: "https://i.pinimg.com/736x/a9/75/93/a975934bb378afc4ca8c133df451f56e.jpg",
+    specialty: "UI Design, Team Lead",
+    bio: "Mahima shapes the team's design vision while championing a culture of iterative improvement and user-centric innovation.",
+    skills: ["UI-Design", "Leadership", "Sketching"],
     icon: <Code className="w-5 h-5" />,
     links: {
       github: "#",
-      linkedin: "#",
-      twitter: "#"
-    }
-  },
-  {
-    name: "Olivia Martinez",
-    role: "Community Manager",
-    image: "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&q=80&w=1740",
-    specialty: "Developer Relations, Communication",
-    bio: "Building bridges between the team and the community. Olivia ensures our work is accessible and our message is clear.",
-    skills: ["Communication", "Content Creation", "Event Management", "Social Media", "Technical Writing"],
-    icon: <MessageSquare className="w-5 h-5" />,
-    links: {
-      github: "#",
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/mahima-chaudhari-518904333/",
       twitter: "#"
     }
   }
