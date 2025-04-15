@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -85,51 +86,53 @@ const TeamMemberCard = ({ member, index }) => {
   return (
     <Reveal delay={0.1 * index}>
       <motion.div 
-        className="glassmorphism p-1 rounded-xl neon-border overflow-hidden"
+        className="glassmorphism p-1 rounded-xl neon-border overflow-hidden h-full flex flex-col"
         whileHover={{ 
           y: -10,
           transition: { duration: 0.3 }
         }}
       >
-        <div className="bg-black/60 rounded-lg overflow-hidden">
-          <div className="relative">
+        <div className="bg-black/60 rounded-lg overflow-hidden flex flex-col h-full">
+          <div className="relative h-64 flex-shrink-0">
             <img 
               src={member.image} 
               alt={member.name}
-              className="w-full h-64 object-cover object-center"
+              className="w-full h-full object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
           </div>
           
-          <div className="p-6">
-            <div className="mb-4 flex justify-between items-start">
-              <div>
-                <h3 className="text-xl font-bold neon-text">{member.name}</h3>
-                <p className="text-secondary">{member.role}</p>
+          <div className="p-6 flex flex-col flex-grow justify-between">
+            <div>
+              <div className="mb-4 flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold neon-text">{member.name}</h3>
+                  <p className="text-secondary">{member.role}</p>
+                </div>
+                <div className="flex-shrink-0 p-2 rounded-full bg-accent/20">{member.icon}</div>
               </div>
-              <div className="flex-shrink-0 p-2 rounded-full bg-accent/20">{member.icon}</div>
+              
+              <HoverCard>
+                <HoverCardTrigger>
+                  <p className="text-sm text-muted-foreground mb-4 cursor-help border-b border-dashed border-muted-foreground inline-block">
+                    {member.specialty}
+                  </p>
+                </HoverCardTrigger>
+                <HoverCardContent className="glassmorphism bg-black/80 border-accent/20 w-80">
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold text-accent">Expertise Areas</h4>
+                    <p className="text-xs text-muted-foreground">{member.bio}</p>
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {member.skills.map((skill, i) => (
+                        <span key={i} className="text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">{skill}</span>
+                      ))}
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
             </div>
             
-            <HoverCard>
-              <HoverCardTrigger>
-                <p className="text-sm text-muted-foreground mb-4 cursor-help border-b border-dashed border-muted-foreground inline-block">
-                  {member.specialty}
-                </p>
-              </HoverCardTrigger>
-              <HoverCardContent className="glassmorphism bg-black/80 border-accent/20 w-80">
-                <div className="space-y-2">
-                  <h4 className="text-sm font-semibold text-accent">Expertise Areas</h4>
-                  <p className="text-xs text-muted-foreground">{member.bio}</p>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {member.skills.map((skill, i) => (
-                      <span key={i} className="text-xs bg-accent/20 text-accent px-2 py-1 rounded-full">{skill}</span>
-                    ))}
-                  </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
-            
-            <div className="flex space-x-2 mt-4">
+            <div className="flex space-x-2 mt-auto">
               <motion.a 
                 href={member.links.github} 
                 className="p-2 bg-muted/20 hover:bg-accent/20 rounded-full text-muted-foreground hover:text-accent transition-colors"
@@ -256,3 +259,4 @@ const Team = () => {
 };
 
 export default Team;
+
