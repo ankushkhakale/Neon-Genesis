@@ -3,24 +3,72 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { Menu, X, Code, Brain, MessageSquare } from 'lucide-react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 
-const NavLink = ({ href, text }: { href: string; text: string }) => {
+const NavLink = ({ href, text, onClick, isExternal = false }: { 
+  href: string; 
+  text: string; 
+  onClick?: () => void;
+  isExternal?: boolean;
+}) => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  
+  // For internal section links on home page
+  if (href.startsWith('#') && isHomePage) {
+    return (
+      <motion.a 
+        href={href} 
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent hover-underline"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={onClick}
+      >
+        {text}
+      </motion.a>
+    );
+  }
+  
+  // For external links or section links when not on home page
+  if (isExternal || (href.startsWith('#') && !isHomePage)) {
+    return (
+      <RouterLink 
+        to={isHomePage ? href : `/${href}`} 
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent hover-underline"
+        onClick={onClick}
+      >
+        <motion.span
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {text}
+        </motion.span>
+      </RouterLink>
+    );
+  }
+  
+  // For navigating to other pages
   return (
-    <motion.a 
-      href={href} 
+    <RouterLink
+      to={href}
       className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent hover-underline"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      onClick={onClick}
     >
-      {text}
-    </motion.a>
+      <motion.span
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        {text}
+      </motion.span>
+    </RouterLink>
   );
 };
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,11 +109,23 @@ export function Navbar() {
           transition={{ duration: 0.5 }}
           className="hidden md:flex items-center space-x-8"
         >
-          <NavLink href="#home" text="Home" />
-          <NavLink href="#about" text="About" />
-          <NavLink href="#services" text="Services" />
-          <NavLink href="#portfolio" text="Projects" />
-          <NavLink href="#contact" text="Contact" />
+          {isHomePage ? (
+            <>
+              <NavLink href="#home" text="Home" onClick={closeMenu} />
+              <NavLink href="#about" text="About" onClick={closeMenu} />
+              <NavLink href="#services" text="Services" onClick={closeMenu} />
+              <NavLink href="#portfolio" text="Projects" onClick={closeMenu} />
+              <NavLink href="#contact" text="Contact" onClick={closeMenu} />
+            </>
+          ) : (
+            <>
+              <NavLink href="/" text="Home" onClick={closeMenu} />
+              <NavLink href="/#about" text="About" onClick={closeMenu} isExternal={true} />
+              <NavLink href="/#services" text="Services" onClick={closeMenu} isExternal={true} />
+              <NavLink href="/#portfolio" text="Projects" onClick={closeMenu} isExternal={true} />
+              <NavLink href="/#contact" text="Contact" onClick={closeMenu} isExternal={true} />
+            </>
+          )}
           <RouterLink to="/team" onClick={closeMenu}>
             <Button variant="outline" className="border-accent/50 hover:border-accent hover:bg-accent/10">
               Our Team
@@ -96,11 +156,23 @@ export function Navbar() {
           className="md:hidden glassmorphism"
         >
           <div className="container mx-auto py-4 flex flex-col space-y-4 px-4">
-            <NavLink href="#home" text="Home" />
-            <NavLink href="#about" text="About" />
-            <NavLink href="#services" text="Services" />
-            <NavLink href="#portfolio" text="Projects" />
-            <NavLink href="#contact" text="Contact" />
+            {isHomePage ? (
+              <>
+                <NavLink href="#home" text="Home" onClick={closeMenu} />
+                <NavLink href="#about" text="About" onClick={closeMenu} />
+                <NavLink href="#services" text="Services" onClick={closeMenu} />
+                <NavLink href="#portfolio" text="Projects" onClick={closeMenu} />
+                <NavLink href="#contact" text="Contact" onClick={closeMenu} />
+              </>
+            ) : (
+              <>
+                <NavLink href="/" text="Home" onClick={closeMenu} />
+                <NavLink href="/#about" text="About" onClick={closeMenu} isExternal={true} />
+                <NavLink href="/#services" text="Services" onClick={closeMenu} isExternal={true} />
+                <NavLink href="/#portfolio" text="Projects" onClick={closeMenu} isExternal={true} />
+                <NavLink href="/#contact" text="Contact" onClick={closeMenu} isExternal={true} />
+              </>
+            )}
             <RouterLink to="/team" onClick={closeMenu} className="w-full">
               <Button variant="outline" className="w-full border-accent/50 hover:border-accent hover:bg-accent/10">
                 Our Team
