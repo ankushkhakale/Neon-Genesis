@@ -20,48 +20,24 @@ const projects = [
     title: "Modern E-commerce Platform",
     category: "Web Design",
     image: "https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&q=80&w=2036",
-    description: "A fully responsive e-commerce platform with advanced filtering and payment integration.",
+    description: "A fully responsive e-commerce platform with advanced filtering and payment integration. Website is still under construction not fully deployed",
     link: "#"
   },
   {
     id: 2,
-    title: "Fitness Tracking Mobile App",
-    category: "Mobile App",
-    image: "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&q=80&w=2070",
-    description: "Track your workouts, nutrition, and progress with this comprehensive fitness application.",
-    link: "#"
+    title: "Energy Sync",
+    category: "Web Design",
+    image: "https://i.pinimg.com/736x/48/44/53/4844537c6b6a08cb47b9c7a1a163b396.jpg",
+    description: "Track energy production, system performance, and environmental impact with our comprehensive monitoring platform.",
+    link: "https://v0-energy-sync-platform.vercel.app/"
   },
   {
     id: 3,
-    title: "Corporate Brand Identity",
-    category: "Branding",
-    image: "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?auto=format&fit=crop&q=80&w=2070",
-    description: "Complete brand identity including logo design, color palette, and brand guidelines.",
-    link: "#"
-  },
-  {
-    id: 4,
-    title: "Travel Booking Website",
-    category: "Web Design",
-    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80&w=2074",
-    description: "An intuitive travel booking platform with destination suggestions and user reviews.",
-    link: "#"
-  },
-  {
-    id: 5,
-    title: "Food Delivery App",
-    category: "Mobile App",
-    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=2070",
-    description: "Order food from local restaurants with real-time delivery tracking and notifications.",
-    link: "#"
-  },
-  {
-    id: 6,
-    title: "Photography Portfolio",
-    category: "Web Design",
-    image: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=2070",
-    description: "Showcase of professional photography with gallery views and client testimonials.",
-    link: "#"
+    title: "Personal Portfolio Website",
+    category: "Self-Branding",
+    image: "https://i.pinimg.com/736x/cf/39/fd/cf39fdc58bcaeb89592b9264c59a2453.jpg",
+    description: "Comprehensive brand identity services: logo design, color palette creation, and detailed brand guidelines.",
+    link: "https://ankushkhakale.netlify.app/"
   }
 ];
 
