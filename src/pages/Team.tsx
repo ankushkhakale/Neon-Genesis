@@ -43,7 +43,7 @@ const teamMembers = [
     role: "UI/UX Designer & DBMS",
     image: "https://media.licdn.com/dms/image/v2/D4E03AQE2qIAJH-4XPQ/profile-displayphoto-shrink_400_400/B4EZQ1eV.ZHEAg-/0/1736063935636?e=1750291200&v=beta&t=srCkypWWKhPx2iBPlyuYsCzxqzXsXJ4k7dFOfrVyO_k",
     specialty: "Database Management, Interaction Design",
-    bio: "Creating beautiful and intuitive interfaces is Jordan's passion. He plays an important role in Database Management for the team.",
+    bio: "Creating beautiful and intuitive interfaces is Atharva's passion. He plays an important role in Database Management for the team.",
     skills: ["NoSQL", "Figma", "C#", "Prototyping", "Design Systems"],
     icon: <Palette className="w-5 h-5" />,
     links: {
@@ -55,7 +55,7 @@ const teamMembers = [
   {
     name: "Shravani Bharambe",
     role: "Frontend Developer ",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1961",
+    image: "/lovable-uploads/a57b3b83-d2ed-4893-8b7e-70d4838d7868.png",
     specialty: "User Interface, Python, DSA",
     bio: "Creating stunning impactful front-end websites. Shravani is passionate about new techs and infrastructure as code.",
     skills: ["Communication", "React", "NodeJS", "Leadership"],
