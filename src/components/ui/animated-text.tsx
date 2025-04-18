@@ -25,8 +25,12 @@ export function AnimatedText({
   useEffect(() => {
     const startAnimation = async () => {
       await controls.start("hidden");
-      await controls.start("visible");
+      setTimeout(async () => {
+        await controls.start("visible");
+      }, 300);
     };
+
+    startAnimation();
 
     if (!once) {
       const interval = setInterval(startAnimation, 10000);
