@@ -1,13 +1,29 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { AnimatedText } from './ui/animated-text';
-import { ArrowRight, Code, Terminal, Cpu } from 'lucide-react';
+import { ArrowRight, Code, Terminal } from 'lucide-react';
 import { JoinTeamModal } from './join-team-modal';
 
 export function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentRole, setCurrentRole] = useState(0);
+  
+  const roles = [
+    "UI/UX Designers",
+    "AI Engineers", 
+    "Frontend Developers",
+    "Backend Developers",
+    "Full Stack Developers"
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentRole((prev) => (prev + 1) % roles.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const scrollToPortfolio = () => {
     const element = document.getElementById('portfolio');
@@ -60,20 +76,48 @@ export function Hero() {
             className="flex flex-col space-y-6"
           >
             <div className="space-y-2">
-              <motion.span
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
                 className="glassmorphism inline-block py-1 px-3 text-sm font-medium text-accent rounded-full"
               >
-                <Code className="inline mr-1 w-4 h-4" /> Passionate Developers
-              </motion.span>
-              <h1 className="font-bold neon-text text-glitch" data-text="WHERE CODE MEETS CREATIVITY">
-                <AnimatedText
-                  text="WHERE CODE MEETS CREATIVITY"
-                  className="leading-tight"
-                  once={false}
-                />
+                <Code className="inline mr-1 w-4 h-4" />
+                <motion.span
+                  key={currentRole}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {roles[currentRole]}
+                </motion.span>
+              </motion.div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
+                <span className="relative inline-block">
+                  <AnimatedText
+                    text="WHERE CODE MEETS CREATIVITY"
+                    className="leading-tight bg-gradient-to-r from-accent via-secondary to-primary bg-clip-text text-transparent font-heading text-glitch tracking-wider"
+                    once={true}
+                    delay={0.1}
+                    staggerChildren={0.05}
+                  />
+                  <motion.span
+                    className="absolute -inset-x-4 -inset-y-2 hidden md:block"
+                    initial={{ opacity: 0 }}
+                    animate={{
+                      opacity: [0.1, 0.3, 0.1],
+                      scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
+                  >
+                    <div className="w-full h-full bg-accent/20 blur-xl rounded-lg"></div>
+                  </motion.span>
+                </span>
               </h1>
             </div>
             <AnimatedText
@@ -151,7 +195,6 @@ export function Hero() {
         </div>
       </div>
       
-      {/* Join Team Modal */}
       <JoinTeamModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
