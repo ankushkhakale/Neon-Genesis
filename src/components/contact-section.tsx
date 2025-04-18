@@ -61,8 +61,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Email Us</h3>
-                  <p className="mt-1 text-muted-foreground">hello@aestheticwave.com</p>
-                  <p className="mt-1 text-muted-foreground">support@aestheticwave.com</p>
+                  <p className="mt-1 text-muted-foreground">neongenesis.devs@gmail.com</p>
                 </div>
               </div>
             </Reveal>
@@ -74,8 +73,8 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h3 className="text-lg font-medium">Call Us</h3>
-                  <p className="mt-1 text-muted-foreground">+1 (555) 123-4567</p>
-                  <p className="mt-1 text-muted-foreground">+1 (555) 987-6543</p>
+                  <p className="mt-1 text-muted-foreground">+91 72764 12788</p>
+                  <p className="mt-1 text-muted-foreground">+91 75881 95521</p>
                 </div>
               </div>
             </Reveal>
@@ -88,9 +87,9 @@ export function ContactSection() {
                 <div>
                   <h3 className="text-lg font-medium">Visit Us</h3>
                   <p className="mt-1 text-muted-foreground">
-                    123 Design Street, Creative District
+                    Nashik District
                     <br />
-                    San Francisco, CA 94107
+                    Maharashtra, India
                   </p>
                 </div>
               </div>
