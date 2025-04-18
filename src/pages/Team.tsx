@@ -56,7 +56,7 @@ const teamMembers = [
     name: "Shravani Bharambe",
     role: "Frontend Developer ",
     image: "/lovable-uploads/a57b3b83-d2ed-4893-8b7e-70d4838d7868.png",
-    specialty: "User Interface, Python, DSA",
+    specialty: "User Interface, Team Lead, Python, DSA",
     bio: "Creating stunning impactful front-end websites. Shravani is passionate about new techs and infrastructure as code.",
     skills: ["Communication", "React", "NodeJS", "Leadership"],
     icon: <Code className="w-5 h-5" />,
