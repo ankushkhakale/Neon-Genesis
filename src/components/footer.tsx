@@ -13,7 +13,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
             <h3 className="text-xl font-bold mb-4">
-              Aesthetic<span className="text-accent">Wave</span>
+              Neon<span className="text-accent">Genesis</span>
             </h3>
             <p className="text-muted-foreground mb-4">
               Creating stunning digital experiences that inspire and elevate your brand.
@@ -89,17 +89,17 @@ export function Footer() {
           <div>
             <h4 className="text-base font-semibold mb-4">Contact</h4>
             <ul className="space-y-3 text-muted-foreground">
-              <li>123 Design Street, Creative District</li>
-              <li>San Francisco, CA 94107</li>
-              <li>hello@aestheticwave.com</li>
-              <li>+1 (555) 123-4567</li>
+              <li>Nashik District</li>
+              <li>Maharashtra, India</li>
+              <li>neongenesis.devs@gmail.com</li>
+              <li>+91 7276412788</li>
             </ul>
           </div>
         </div>
         
         <div className="relative border-t pt-8 mt-8 flex flex-col sm:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} AestheticWave. All rights reserved.
+            © {new Date().getFullYear()} Neon Genesis. All rights reserved.
           </p>
           <div className="mt-4 sm:mt-0 flex items-center space-x-4">
             <a href="#" className="text-sm text-muted-foreground hover:text-accent hover-underline transition-colors">
