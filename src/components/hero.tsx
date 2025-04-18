@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { AnimatedText } from './ui/animated-text';
 import { ArrowRight, Code, Terminal } from 'lucide-react';
 import { JoinTeamModal } from './join-team-modal';
+import MeteorShower from './meteor-shower';
 
 export function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,12 +39,15 @@ export function Hero() {
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center pt-20 pb-16 relative overflow-hidden">
-      {/* Background grid */}
-      <div className="absolute inset-0 cyberpunk-grid opacity-30"></div>
+      {/* Background grid with reduced opacity */}
+      <div className="absolute inset-0 cyberpunk-grid opacity-20"></div>
       
-      {/* Animated orbs */}
+      {/* Add Meteor Shower effect */}
+      <MeteorShower />
+      
+      {/* Animated orbs with reduced opacity */}
       <motion.div 
-        className="absolute -top-20 -left-20 w-96 h-96 bg-primary/10 rounded-full filter blur-3xl opacity-20"
+        className="absolute -top-20 -left-20 w-96 h-96 bg-primary/5 rounded-full filter blur-3xl opacity-10"
         animate={{
           x: [0, 100, 0],
           y: [0, 50, 0],
@@ -55,7 +60,7 @@ export function Hero() {
       />
       
       <motion.div 
-        className="absolute -bottom-40 -right-20 w-96 h-96 bg-accent/10 rounded-full filter blur-3xl opacity-30"
+        className="absolute -bottom-40 -right-20 w-96 h-96 bg-accent/5 rounded-full filter blur-3xl opacity-20"
         animate={{
           x: [0, -100, 0],
           y: [0, -50, 0],
