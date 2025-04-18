@@ -93,31 +93,8 @@ export function Hero() {
                   {roles[currentRole]}
                 </motion.span>
               </motion.div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
-                <span className="relative inline-block">
-                  <AnimatedText
-                    text="WHERE CODE MEETS CREATIVITY"
-                    className="leading-tight bg-gradient-to-r from-accent via-secondary to-primary bg-clip-text text-transparent font-heading text-glitch tracking-wider"
-                    once={true}
-                    delay={0.1}
-                    staggerChildren={0.05}
-                  />
-                  <motion.span
-                    className="absolute -inset-x-4 -inset-y-2 hidden md:block"
-                    initial={{ opacity: 0 }}
-                    animate={{
-                      opacity: [0.1, 0.3, 0.1],
-                      scale: [1, 1.05, 1],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                    }}
-                  >
-                    <div className="w-full h-full bg-accent/20 blur-xl rounded-lg"></div>
-                  </motion.span>
-                </span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-foreground">
+                WHERE CODE MEETS CREATIVITY
               </h1>
             </div>
             <AnimatedText
