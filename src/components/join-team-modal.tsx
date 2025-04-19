@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, User, Mail, Code, BriefcaseBusiness } from 'lucide-react';
@@ -19,7 +18,7 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [webhookUrl, setWebhookUrl] = useState(''); // Store Zapier webhook URL
+  const webhookUrl = 'https://hooks.zapier.com/hooks/catch/22581109/2x5er3e/';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -31,8 +30,7 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
     setIsSubmitting(true);
     
     try {
-      // Send data to Zapier webhook
-      const response = await fetch(webhookUrl || 'your-zapier-webhook-url', {
+      await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,17 +101,6 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
                 >
                   <X className="h-5 w-5" />
                 </Button>
-              </div>
-              
-              {/* Add Zapier webhook URL input for admin setup */}
-              <div className="mb-4 p-2 bg-accent/5 rounded-lg">
-                <input
-                  type="text"
-                  placeholder="Enter Zapier webhook URL (admin only)"
-                  value={webhookUrl}
-                  onChange={(e) => setWebhookUrl(e.target.value)}
-                  className="w-full bg-transparent border-0 text-xs text-muted-foreground focus:outline-none"
-                />
               </div>
               
               <form onSubmit={handleSubmit} className="space-y-4">
