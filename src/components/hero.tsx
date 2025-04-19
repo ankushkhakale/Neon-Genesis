@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
@@ -6,6 +5,7 @@ import { AnimatedText } from './ui/animated-text';
 import { ArrowRight, Code, Terminal } from 'lucide-react';
 import { JoinTeamModal } from './join-team-modal';
 import MeteorShower from './meteor-shower';
+import BlackHole from './black-hole';
 
 export function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,9 +40,12 @@ export function Hero() {
   return (
     <section id="home" className="min-h-screen flex items-center justify-center pt-20 pb-16 relative overflow-hidden">
       {/* Background grid with reduced opacity */}
-      <div className="absolute inset-0 cyberpunk-grid opacity-20"></div>
+      <div className="absolute inset-0 cyberpunk-grid opacity-10"></div>
       
-      {/* Add Meteor Shower effect */}
+      {/* Add Black Hole effect */}
+      <BlackHole />
+      
+      {/* Add enhanced Meteor Shower effect */}
       <MeteorShower />
       
       {/* Animated orbs with reduced opacity */}

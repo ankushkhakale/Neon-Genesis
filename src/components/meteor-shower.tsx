@@ -3,12 +3,12 @@ import { motion } from 'framer-motion';
 
 const MeteorShower = () => {
   // Generate multiple meteors with different positions and delays
-  const meteors = Array.from({ length: 20 }).map((_, index) => ({
+  const meteors = Array.from({ length: 30 }).map((_, index) => ({
     id: index,
-    delay: Math.random() * 5,
-    duration: 1 + Math.random() * 2,
+    delay: Math.random() * 3,
+    duration: 0.8 + Math.random() * 1,
     top: Math.random() * 100,
-    left: 40 + Math.random() * 60, // Start from middle to right side
+    left: 40 + Math.random() * 60,
   }));
 
   return (
@@ -32,11 +32,11 @@ const MeteorShower = () => {
             duration: meteor.duration,
             delay: meteor.delay,
             repeat: Infinity,
-            repeatDelay: Math.random() * 3 + 2,
+            repeatDelay: Math.random() * 2 + 1,
           }}
-          className="absolute h-0.5 w-12 bg-gradient-to-r from-transparent via-accent to-transparent rotate-[25deg] rounded-full"
+          className="absolute h-1 w-20 bg-gradient-to-r from-transparent via-accent to-transparent rotate-[25deg] rounded-full"
           style={{
-            boxShadow: '0 0 10px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3)',
+            boxShadow: '0 0 20px rgba(139, 92, 246, 0.8), 0 0 40px rgba(139, 92, 246, 0.6)',
           }}
         />
       ))}
