@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
@@ -5,7 +6,7 @@ import { AnimatedText } from './ui/animated-text';
 import { ArrowRight, Code, Terminal } from 'lucide-react';
 import { JoinTeamModal } from './join-team-modal';
 import MeteorShower from './meteor-shower';
-import BlackHole from './black-hole';
+import PlanetarySystem from './planetary-system';
 
 export function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,8 +43,8 @@ export function Hero() {
       {/* Background grid with reduced opacity */}
       <div className="absolute inset-0 cyberpunk-grid opacity-10"></div>
       
-      {/* Add Black Hole effect */}
-      <BlackHole />
+      {/* Add Planetary System effect */}
+      <PlanetarySystem />
       
       {/* Add enhanced Meteor Shower effect */}
       <MeteorShower />
