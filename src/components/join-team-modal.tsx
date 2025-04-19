@@ -19,25 +19,57 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState(''); // Store Zapier webhook URL
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      // Send data to Zapier webhook
+      const response = await fetch(webhookUrl || 'your-zapier-webhook-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'no-cors',
+        body: JSON.stringify({
+          ...formData,
+          recipient: 'neongenesis.devs@gmail.com',
+          timestamp: new Date().toISOString(),
+          source: window.location.origin,
+        }),
+      });
+
       toast({
         title: "Application Submitted!",
         description: "Thank you for your interest in joining Neon Genesis. We'll review your application soon.",
       });
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        skills: '',
+        experience: ''
+      });
+      
       onClose();
-    }, 1500);
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      toast({
+        title: "Error",
+        description: "There was a problem submitting your application. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -71,6 +103,17 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
                 >
                   <X className="h-5 w-5" />
                 </Button>
+              </div>
+              
+              {/* Add Zapier webhook URL input for admin setup */}
+              <div className="mb-4 p-2 bg-accent/5 rounded-lg">
+                <input
+                  type="text"
+                  placeholder="Enter Zapier webhook URL (admin only)"
+                  value={webhookUrl}
+                  onChange={(e) => setWebhookUrl(e.target.value)}
+                  className="w-full bg-transparent border-0 text-xs text-muted-foreground focus:outline-none"
+                />
               </div>
               
               <form onSubmit={handleSubmit} className="space-y-4">
