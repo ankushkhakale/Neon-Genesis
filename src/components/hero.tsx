@@ -1,16 +1,20 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { AnimatedText } from './ui/animated-text';
 import { ArrowRight, Code, Terminal } from 'lucide-react';
 import { JoinTeamModal } from './join-team-modal';
-import MeteorShower from './meteor-shower';
-import PlanetarySystem from './planetary-system';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+// Lazy load heavy components
+const MeteorShower = lazy(() => import('./meteor-shower'));
+const PlanetarySystem = lazy(() => import('./planetary-system'));
 
 export function Hero() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentRole, setCurrentRole] = useState(0);
+  const isMobile = useIsMobile();
   
   const roles = [
     "UI/UX Designers",
@@ -39,22 +43,26 @@ export function Hero() {
   };
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center pt-20 pb-16 relative overflow-hidden">
+    <section id="home" className="min-h-screen flex items-center justify-center pt-16 md:pt-20 pb-16 relative overflow-hidden">
       {/* Background grid with reduced opacity */}
       <div className="absolute inset-0 cyberpunk-grid opacity-10"></div>
       
-      {/* Add Planetary System effect */}
-      <PlanetarySystem />
+      {/* Add Planetary System effect - conditionally rendered based on device */}
+      <Suspense fallback={null}>
+        {!isMobile && <PlanetarySystem />}
+      </Suspense>
       
-      {/* Add enhanced Meteor Shower effect */}
-      <MeteorShower />
+      {/* Add enhanced Meteor Shower effect - conditionally rendered based on device */}
+      <Suspense fallback={null}>
+        <MeteorShower />
+      </Suspense>
       
       {/* Animated orbs with reduced opacity */}
       <motion.div 
-        className="absolute -top-20 -left-20 w-96 h-96 bg-primary/5 rounded-full filter blur-3xl opacity-10"
+        className="absolute -top-20 -left-20 w-72 md:w-96 h-72 md:h-96 bg-primary/5 rounded-full filter blur-3xl opacity-10"
         animate={{
-          x: [0, 100, 0],
-          y: [0, 50, 0],
+          x: [0, 50, 0],
+          y: [0, 25, 0],
         }}
         transition={{
           duration: 25,
@@ -64,10 +72,10 @@ export function Hero() {
       />
       
       <motion.div 
-        className="absolute -bottom-40 -right-20 w-96 h-96 bg-accent/5 rounded-full filter blur-3xl opacity-20"
+        className="absolute -bottom-40 -right-20 w-72 md:w-96 h-72 md:h-96 bg-accent/5 rounded-full filter blur-3xl opacity-20"
         animate={{
-          x: [0, -100, 0],
-          y: [0, -50, 0],
+          x: [0, -50, 0],
+          y: [0, -25, 0],
         }}
         transition={{
           duration: 20,
@@ -82,7 +90,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex flex-col space-y-6"
+            className="flex flex-col space-y-4 md:space-y-6"
           >
             <div className="space-y-2">
               <motion.div
@@ -102,13 +110,13 @@ export function Hero() {
                   {roles[currentRole]}
                 </motion.span>
               </motion.div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-foreground">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tighter text-foreground">
                 WHERE CODE MEETS CREATIVITY
               </h1>
             </div>
             <AnimatedText
               text="We are Neon Genesis, a team of passionate developers willing to do anything for coding. We create the future through innovation and technology."
-              className="text-lg text-muted-foreground"
+              className="text-base md:text-lg text-muted-foreground"
               once={true}
             />
             <motion.div
@@ -118,7 +126,7 @@ export function Hero() {
               className="flex flex-col sm:flex-row gap-4"
             >
               <Button 
-                size="lg" 
+                size={isMobile ? "default" : "lg"} 
                 className="group bg-accent hover:bg-accent/90 neon-border animate-pulse-glow"
                 onClick={scrollToPortfolio}
               >
@@ -126,7 +134,7 @@ export function Hero() {
                 <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button 
-                size="lg" 
+                size={isMobile ? "default" : "lg"} 
                 variant="outline" 
                 className="border-accent/50 hover:border-accent hover:bg-accent/10"
                 onClick={() => setIsModalOpen(true)}
@@ -142,8 +150,8 @@ export function Hero() {
             className="relative flex justify-center"
           >
             <div className="relative w-full max-w-lg">
-              <div className="absolute top-0 -left-4 w-72 h-72 bg-accent/30 rounded-full filter blur-3xl opacity-30 animate-float" />
-              <div className="absolute -bottom-24 right-0 w-72 h-72 bg-primary/30 rounded-full filter blur-3xl opacity-30 animate-float" style={{ animationDelay: "2s" }} />
+              <div className="absolute top-0 -left-4 w-56 sm:w-72 h-56 sm:h-72 bg-accent/30 rounded-full filter blur-3xl opacity-30 animate-float" />
+              <div className="absolute -bottom-24 right-0 w-56 sm:w-72 h-56 sm:h-72 bg-primary/30 rounded-full filter blur-3xl opacity-30 animate-float" style={{ animationDelay: "2s" }} />
               <motion.div
                 className="glassmorphism rounded-xl overflow-hidden neon-border animate-pulse-glow p-1"
                 initial={{ y: 20 }}
@@ -164,7 +172,7 @@ export function Hero() {
                       <Terminal className="w-4 h-4 mr-1" /> neongenesis.terminal
                     </div>
                   </div>
-                  <div className="font-mono text-sm text-green-400">
+                  <div className="font-mono text-xs sm:text-sm text-green-400">
                     <p className="mb-1">$ <span className="animate-text-flicker">initialize neon_genesis</span></p>
                     <p className="mb-1 text-blue-400">Loading team assets...</p>
                     <p className="mb-1 text-purple-400">Compiling creative algorithms...</p>

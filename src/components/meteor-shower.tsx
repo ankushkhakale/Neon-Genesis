@@ -1,9 +1,15 @@
 
 import { motion } from 'framer-motion';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const MeteorShower = () => {
+  const isMobile = useIsMobile();
+  
+  // Generate fewer meteors on mobile for better performance
+  const meteorCount = isMobile ? 10 : 30;
+  
   // Generate multiple meteors with different positions and delays
-  const meteors = Array.from({ length: 30 }).map((_, index) => ({
+  const meteors = Array.from({ length: meteorCount }).map((_, index) => ({
     id: index,
     delay: Math.random() * 3,
     duration: 0.8 + Math.random() * 1,
@@ -34,9 +40,9 @@ const MeteorShower = () => {
             repeat: Infinity,
             repeatDelay: Math.random() * 2 + 1,
           }}
-          className="absolute h-1 w-20 bg-gradient-to-r from-transparent via-accent to-transparent rotate-[25deg] rounded-full"
+          className="absolute h-1 w-10 sm:w-20 bg-gradient-to-r from-transparent via-accent to-transparent rotate-[25deg] rounded-full"
           style={{
-            boxShadow: '0 0 20px rgba(139, 92, 246, 0.8), 0 0 40px rgba(139, 92, 246, 0.6)',
+            boxShadow: isMobile ? '0 0 10px rgba(139, 92, 246, 0.6)' : '0 0 20px rgba(139, 92, 246, 0.8), 0 0 40px rgba(139, 92, 246, 0.6)',
           }}
         />
       ))}

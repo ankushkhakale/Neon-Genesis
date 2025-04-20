@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, User, Mail, Code, BriefcaseBusiness, Briefcase } from 'lucide-react';
@@ -94,7 +95,7 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-0">
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-0 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -104,14 +105,14 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
           />
           
           <motion.div
-            className="relative w-full max-w-lg bg-background rounded-xl overflow-hidden neon-border z-10"
+            className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto my-4 bg-background rounded-xl overflow-hidden neon-border z-10"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
           >
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-heading tracking-wider heading-slashed">
+                <h2 className="text-lg sm:text-xl font-heading tracking-wider heading-slashed">
                   JOIN OUR TEAM
                 </h2>
                 <Button 

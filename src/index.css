@@ -54,6 +54,18 @@
   body {
     @apply bg-background text-foreground font-body;
     font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Improve performance for animations */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .will-change-opacity {
+    will-change: opacity;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -75,8 +87,16 @@
     letter-spacing: 0.03em;
   }
 
+  /* More performant hover effect */
   .hover-underline {
-    @apply relative inline-block after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-accent after:transition-all after:duration-300 hover:after:w-full;
+    @apply relative inline-block;
+    &::after {
+      @apply absolute bottom-0 left-0 h-0.5 w-0 bg-accent transition-all duration-300;
+      content: '';
+    }
+    &:hover::after {
+      @apply w-full;
+    }
   }
   
   .text-gradient {
@@ -105,7 +125,8 @@
   }
 
   .neon-border {
-    @apply border border-accent/50 shadow-[0_0_10px_rgba(139,92,246,0.5)];
+    @apply border border-accent/50;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
   }
 
   .neon-text {
@@ -154,40 +175,54 @@
     width: 20px;
     text-align: left;
   }
-  
+}
+
+/* Animation Classes with reduced motion preference support */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 15px rgba(139, 92, 246, 0.5); }
+    50% { box-shadow: 0 0 25px rgba(139, 92, 246, 0.8); }
+  }
+
+  @keyframes text-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+    20%, 22%, 24%, 55% { opacity: 0.5; }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-text-flicker {
+    animation: text-flicker 5s linear infinite;
+  }
+
+  @keyframes text-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-text-shift {
+    animation: text-shift 6s linear infinite;
+  }
+
   @keyframes dots {
     0%, 20% { content: '.'; }
     40% { content: '..'; }
     60%, 100% { content: '...'; }
-  }
-  
-  /* Glitch effect enhancement */
-  .glitch-text {
-    position: relative;
-    animation: glitch-skew 1s infinite linear alternate-reverse;
-  }
-  
-  .glitch-text::before,
-  .glitch-text::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .glitch-text::before {
-    left: 2px;
-    text-shadow: -2px 0 #ff00c1;
-    clip: rect(44px, 450px, 56px, 0);
-    animation: glitch-anim 5s infinite linear alternate-reverse;
-  }
-  
-  .glitch-text::after {
-    left: -2px;
-    text-shadow: -2px 0 #00fff9, 2px 2px #ff00c1;
-    animation: glitch-anim2 1s infinite linear alternate-reverse;
   }
   
   @keyframes glitch-anim {
@@ -199,77 +234,10 @@
       clip: rect(92px, 9999px, 90px, 0);
       transform: skew(0.84deg);
     }
-    10% {
-      clip: rect(37px, 9999px, 56px, 0);
-      transform: skew(0.87deg);
-    }
-    15% {
-      clip: rect(73px, 9999px, 75px, 0);
-      transform: skew(0.41deg);
-    }
-    20% {
-      clip: rect(50px, 9999px, 20px, 0);
-      transform: skew(0.67deg);
-    }
-    25% {
-      clip: rect(42px, 9999px, 67px, 0);
-      transform: skew(0.35deg);
-    }
-    30% {
-      clip: rect(5px, 9999px, 15px, 0);
-      transform: skew(0.6deg);
-    }
-    35% {
-      clip: rect(21px, 9999px, 89px, 0);
-      transform: skew(0.67deg);
-    }
-    40% {
-      clip: rect(35px, 9999px, 26px, 0);
-      transform: skew(0.87deg);
-    }
-    45% {
-      clip: rect(27px, 9999px, 16px, 0);
-      transform: skew(0.28deg);
-    }
+    /* Reduced keyframes for better performance */
     50% {
       clip: rect(99px, 9999px, 55px, 0);
       transform: skew(0.93deg);
-    }
-    55% {
-      clip: rect(100px, 9999px, 30px, 0);
-      transform: skew(0.3deg);
-    }
-    60% {
-      clip: rect(17px, 9999px, 19px, 0);
-      transform: skew(0.4deg);
-    }
-    65% {
-      clip: rect(39px, 9999px, 17px, 0);
-      transform: skew(0.33deg);
-    }
-    70% {
-      clip: rect(91px, 9999px, 43px, 0);
-      transform: skew(0.94deg);
-    }
-    75% {
-      clip: rect(41px, 9999px, 99px, 0);
-      transform: skew(0.2deg);
-    }
-    80% {
-      clip: rect(1px, 9999px, 59px, 0);
-      transform: skew(0.91deg);
-    }
-    85% {
-      clip: rect(87px, 9999px, 62px, 0);
-      transform: skew(0.67deg);
-    }
-    90% {
-      clip: rect(16px, 9999px, 28px, 0);
-      transform: skew(0.31deg);
-    }
-    95% {
-      clip: rect(79px, 9999px, 73px, 0);
-      transform: skew(0.87deg);
     }
     100% {
       clip: rect(89px, 9999px, 44px, 0);
@@ -282,81 +250,10 @@
       clip: rect(65px, 9999px, 65px, 0);
       transform: skew(0.06deg);
     }
-    5% {
-      clip: rect(85px, 9999px, 69px, 0);
-      transform: skew(0.9deg);
-    }
-    10% {
-      clip: rect(63px, 9999px, 68px, 0);
-      transform: skew(0.59deg);
-    }
-    15% {
-      clip: rect(39px, 9999px, 27px, 0);
-      transform: skew(0.35deg);
-    }
-    20% {
-      clip: rect(13px, 9999px, 97px, 0);
-      transform: skew(0.07deg);
-    }
-    25% {
-      clip: rect(92px, 9999px, 78px, 0);
-      transform: skew(0.83deg);
-    }
-    30% {
-      clip: rect(73px, 9999px, 97px, 0);
-      transform: skew(0.7deg);
-    }
-    35% {
-      clip: rect(5px, 9999px, 67px, 0);
-      transform: skew(0.6deg);
-    }
-    40% {
-      clip: rect(99px, 9999px, 1px, 0);
-      transform: skew(0.33deg);
-    }
-    45% {
-      clip: rect(46px, 9999px, 81px, 0);
-      transform: skew(0.59deg);
-    }
+    /* Reduced keyframes for better performance */
     50% {
       clip: rect(87px, 9999px, 7px, 0);
       transform: skew(0.29deg);
-    }
-    55% {
-      clip: rect(24px, 9999px, 59px, 0);
-      transform: skew(0.8deg);
-    }
-    60% {
-      clip: rect(61px, 9999px, 33px, 0);
-      transform: skew(0.94deg);
-    }
-    65% {
-      clip: rect(29px, 9999px, 16px, 0);
-      transform: skew(0.64deg);
-    }
-    70% {
-      clip: rect(33px, 9999px, 34px, 0);
-      transform: skew(0.62deg);
-    }
-    75% {
-      clip: rect(38px, 9999px, 46px, 0);
-      transform: skew(0.07deg);
-    }
-    80% {
-      clip: rect(45px, 9999px, 28px, 0);
-      transform: skew(0.31deg);
-    }
-    85% {
-      clip: rect(68px, 9999px, 92px, 0);
-      transform: skew(0.43deg);
-    }
-    90% {
-      clip: rect(85px, 9999px, 56px, 0);
-      transform: skew(0.03deg);
-    }
-    95% {
-      clip: rect(70px, 9999px, 99px, 0);
-      transform: skew(0.38deg);
     }
     100% {
       clip: rect(70px, 9999px, 97px, 0);
@@ -368,32 +265,9 @@
     0% {
       transform: skew(0deg);
     }
-    10% {
-      transform: skew(0deg);
-    }
-    20% {
-      transform: skew(0.3deg);
-    }
-    30% {
-      transform: skew(0.1deg);
-    }
-    40% {
-      transform: skew(-0.3deg);
-    }
+    /* Reduced keyframes for better performance */
     50% {
       transform: skew(0.4deg);
-    }
-    60% {
-      transform: skew(0deg);
-    }
-    70% {
-      transform: skew(0.5deg);
-    }
-    80% {
-      transform: skew(-0.1deg);
-    }
-    90% {
-      transform: skew(-0.3deg);
     }
     100% {
       transform: skew(0.2deg);
@@ -401,43 +275,12 @@
   }
 }
 
-/* Animation Classes */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 15px rgba(139, 92, 246, 0.5); }
-  50% { box-shadow: 0 0 25px rgba(139, 92, 246, 0.8); }
-}
-
-@keyframes text-flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-  20%, 22%, 24%, 55% { opacity: 0.5; }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-.animate-text-flicker {
-  animation: text-flicker 5s linear infinite;
-}
-
-@keyframes text-shift {
-  0%, 100% {
-    background-position: 0% 50%;
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-.animate-text-shift {
-  animation: text-shift 6s linear infinite;
 }
