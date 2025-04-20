@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, User, Mail, Code, BriefcaseBusiness, Briefcase, Target } from 'lucide-react';
+import { X, Send, User, Mail, Code, BriefcaseBusiness, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -11,8 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 
 interface JoinTeamModalProps {
   isOpen: boolean;
@@ -26,7 +23,6 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
     skills: '',
     experience: '',
     interestedService: '',
-    interests: [] as string[],
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,20 +30,10 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
 
   const services = [
     "Web Development",
-    "AI/ML Solutions",
+    "AI/ML Solutions", 
     "UI/UX Design",
     "Cloud Services",
     "Mobile Development"
-  ];
-
-  const interestFields = [
-    "Frontend Development",
-    "Backend Development",
-    "Machine Learning",
-    "UI/UX Design",
-    "DevOps",
-    "Project Management",
-    "Data Science"
   ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -57,15 +43,6 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
 
   const handleServiceChange = (value: string) => {
     setFormData(prev => ({ ...prev, interestedService: value }));
-  };
-
-  const handleInterestToggle = (value: string) => {
-    setFormData(prev => {
-      const interests = prev.interests.includes(value)
-        ? prev.interests.filter(i => i !== value)
-        : [...prev.interests, value];
-      return { ...prev, interests };
-    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -99,7 +76,6 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
         skills: '',
         experience: '',
         interestedService: '',
-        interests: [],
       });
       
       onClose();
@@ -201,27 +177,6 @@ export function JoinTeamModal({ isOpen, onClose }: JoinTeamModalProps) {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium flex items-center mb-3">
-                    <Target className="w-4 h-4 mr-2 text-accent" />
-                    INTERESTED FIELDS
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {interestFields.map((field) => (
-                      <div key={field} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={field}
-                          checked={formData.interests.includes(field)}
-                          onCheckedChange={() => handleInterestToggle(field)}
-                        />
-                        <Label htmlFor={field} className="text-sm">
-                          {field}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
                 </div>
                 
                 <div className="space-y-2">
