@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Reveal } from './ui/reveal';
@@ -6,19 +5,38 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import { useToast } from './ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 export function ContactSection() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const ZAPIER_WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/22581109/2x5er3e/";
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      subject: formData.get('subject'),
+      message: formData.get('message'),
+      recipient: "neongenesis.devs@gmail.com",
+      timestamp: new Date().toISOString(),
+      source: window.location.origin,
+    };
+
+    try {
+      const response = await fetch(ZAPIER_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'no-cors',
+        body: JSON.stringify(data),
+      });
+
       toast({
         title: "Message sent!",
         description: "We'll get back to you soon.",
@@ -27,7 +45,16 @@ export function ContactSection() {
       
       // Reset form
       (e.target as HTMLFormElement).reset();
-    }, 1500);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -123,20 +150,20 @@ export function ContactSection() {
                   <label htmlFor="name" className="text-sm font-medium">
                     Name
                   </label>
-                  <Input id="name" placeholder="Your name" required />
+                  <Input id="name" name="name" placeholder="Your name" required />
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="email" className="text-sm font-medium">
                     Email
                   </label>
-                  <Input id="email" type="email" placeholder="Your email" required />
+                  <Input id="email" name="email" type="email" placeholder="Your email" required />
                 </div>
               </div>
               <div className="space-y-2">
                 <label htmlFor="subject" className="text-sm font-medium">
                   Subject
                 </label>
-                <Input id="subject" placeholder="How can we help you?" required />
+                <Input id="subject" name="subject" placeholder="How can we help you?" required />
               </div>
               <div className="space-y-2">
                 <label htmlFor="message" className="text-sm font-medium">
@@ -144,6 +171,7 @@ export function ContactSection() {
                 </label>
                 <Textarea 
                   id="message" 
+                  name="message"
                   placeholder="Your message..." 
                   rows={5} 
                   required 
