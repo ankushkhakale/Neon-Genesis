@@ -2,7 +2,7 @@
 
 ## Website info
 
-**URL**: https://lovable.dev/projects/ae282d07-678b-48ec-a2f2-da86bc82df2c
+**URL**: https://neon-genesis.vercel.app/
 
 ## What technologies are used for this project?
 
