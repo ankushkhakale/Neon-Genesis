@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -7,7 +6,8 @@ import { Footer } from '@/components/footer';
 import { Loader } from '@/components/loader';
 import { Reveal } from '@/components/ui/reveal';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-import { Github, Linkedin, Twitter, Code, Brain, Palette, MessageSquare } from 'lucide-react';
+import { Github, Linkedin, Twitter, Code, Brain, Palette } from 'lucide-react';
+import { JoinTeamModal } from '@/components/join-team-modal';
 
 const teamMembers = [
   {
@@ -171,6 +171,7 @@ const TeamMemberCard = ({ member, index }) => {
 
 const Team = () => {
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -247,6 +248,7 @@ const Team = () => {
                     className="mt-4 bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-lg font-medium w-full"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
+                    onClick={() => setIsModalOpen(true)}
                   >
                     Apply Now
                   </motion.button>
@@ -258,6 +260,11 @@ const Team = () => {
         
         <Footer />
       </main>
+
+      <JoinTeamModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </>
   );
 };
