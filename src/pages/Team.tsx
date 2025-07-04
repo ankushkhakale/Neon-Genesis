@@ -8,6 +8,7 @@ import { Reveal } from '@/components/ui/reveal';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Github, Linkedin, Twitter, Code, Brain, Palette } from 'lucide-react';
 import { JoinTeamModal } from '@/components/join-team-modal';
+import { Breadcrumb, breadcrumbConfigs } from '@/components/breadcrumb';
 
 const teamMembers = [
   {
@@ -41,7 +42,7 @@ const teamMembers = [
   {
     name: "Atharva Jondhale",
     role: "UI/UX Designer & DBMS",
-    image: "",
+    image: "/lovable-uploads/jondhale.jpeg",
     specialty: "Database Management, Interaction Design",
     bio: "Creating beautiful and intuitive interfaces is Atharva's passion. He plays an important role in Database Management for the team.",
     skills: ["NoSQL", "Figma", "C#", "Prototyping", "Design Systems"],
@@ -186,11 +187,16 @@ const Team = () => {
       <AnimatePresence>
         {loading && <Loader />}
       </AnimatePresence>
-
-      <main className="min-h-screen relative">
-        <div className="absolute inset-0 cyberpunk-grid opacity-20"></div>
+      
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 md:px-6 pt-24">
+          <Breadcrumb items={breadcrumbConfigs.team} />
+        </div>
         
-        <Navbar />
+        <main className="min-h-screen relative">
+          <div className="absolute inset-0 cyberpunk-grid opacity-20"></div>
+          
+          <Navbar />
         
         <section className="pt-32 pb-16 relative z-10">
           <div className="container mx-auto px-4 md:px-6">
@@ -259,7 +265,8 @@ const Team = () => {
         </section>
         
         <Footer />
-      </main>
+        </main>
+      </div>
 
       <JoinTeamModal 
         isOpen={isModalOpen} 

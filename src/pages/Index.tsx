@@ -6,6 +6,7 @@ import { Navbar } from '@/components/navbar';
 import { Hero } from '@/components/hero';
 import { Loader } from '@/components/loader';
 import { toast } from '@/hooks/use-toast';
+import { Breadcrumb, breadcrumbConfigs } from '@/components/breadcrumb';
 
 // Lazy load components that are not visible in the initial viewport
 const AboutSection = lazy(() => import('@/components/about-section').then(module => ({ default: module.AboutSection })));
@@ -95,24 +96,36 @@ const Index = () => {
         
         <Suspense fallback={null}>
           <div id="about">
+            <div className="container mx-auto px-4 md:px-6 pt-8">
+              <Breadcrumb items={breadcrumbConfigs.about} />
+            </div>
             <AboutSection />
           </div>
         </Suspense>
         
         <Suspense fallback={null}>
           <div id="services">
+            <div className="container mx-auto px-4 md:px-6 pt-8">
+              <Breadcrumb items={breadcrumbConfigs.services} />
+            </div>
             <ServicesSection />
           </div>
         </Suspense>
         
         <Suspense fallback={null}>
           <div id="portfolio">
+            <div className="container mx-auto px-4 md:px-6 pt-8">
+              <Breadcrumb items={breadcrumbConfigs.portfolio} />
+            </div>
             <PortfolioSection />
           </div>
         </Suspense>
         
         <Suspense fallback={null}>
           <div id="contact">
+            <div className="container mx-auto px-4 md:px-6 pt-8">
+              <Breadcrumb items={breadcrumbConfigs.contact} />
+            </div>
             <ContactSection />
           </div>
         </Suspense>
