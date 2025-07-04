@@ -69,7 +69,7 @@ const teamMembers = [
   {
     name: "Mahima Chaudhari",
     role: "UI-UX Designer",
-    image: "https://i.pinimg.com/736x/a9/75/93/a975934bb378afc4ca8c133df451f56e.jpg",
+    image: "/lovable-uploads/WhatsApp Image 2025-07-04 at 3.08.52 PM.jpeg",
     specialty: "UI Design, Team Lead",
     bio: "Mahima shapes the team's design vision while championing a culture of iterative improvement and user-centric innovation.",
     skills: ["UI-Design", "Leadership", "Sketching"],
