@@ -13,7 +13,7 @@ const teamMembers = [
   {
     name: "Ankush Khakale",
     role: "Full-Stack Developer",
-    image: "https://media.licdn.com/dms/image/v2/D4E03AQFhFPMKUIyaBw/profile-displayphoto-shrink_400_400/B4EZTFsYjtGYAg-/0/1738483536336?e=1750291200&v=beta&t=NlQIL1l_IOqbN4A0iK8KZDnqK1eGbT_acR6Kf8jxhyQ",
+    image: "/lovable-uploads/WhatsApp Image 2025-07-04 at 3.41.39 PM.jpeg",
     specialty: "React, GenAI, Python",
     bio: "Passionate about creating elegant solutions to complex problems. When not coding, Ankush enjoys competitive gaming and mountain biking.",
     skills: ["React", "Node.js", "Python", "GenAI", "Google Cloud"],
@@ -27,7 +27,7 @@ const teamMembers = [
   {
     name: "Atharva Jangale",
     role: "AI/ML Enthusiast",
-    image: "https://media.licdn.com/dms/image/v2/D5622AQHKkP1EdMlD9A/feedshare-shrink_1280/B56ZThx9BxGoAs-/0/1738954758452?e=1747872000&v=beta&t=O61CCY5eFQ9chQvueuf6hNwo-IBdPQk5EHGeq-_-RHQ",
+    image: "/lovable-uploads/WhatsApp Image 2025-07-04 at 3.41.37 PM.jpeg",
     specialty: "MCP, Google Cloud, NLP",
     bio: "Fascinated by the possibilities of machine learning. Atharva specializes in creating intelligent solutions that push technology forward.",
     skills: ["TensorFlow", "Python", "IoT", "NLP", "API"],
@@ -41,7 +41,7 @@ const teamMembers = [
   {
     name: "Atharva Jondhale",
     role: "UI/UX Designer & DBMS",
-    image: "https://media.licdn.com/dms/image/v2/D4E03AQE2qIAJH-4XPQ/profile-displayphoto-shrink_400_400/B4EZQ1eV.ZHEAg-/0/1736063935636?e=1750291200&v=beta&t=srCkypWWKhPx2iBPlyuYsCzxqzXsXJ4k7dFOfrVyO_k",
+    image: "",
     specialty: "Database Management, Interaction Design",
     bio: "Creating beautiful and intuitive interfaces is Atharva's passion. He plays an important role in Database Management for the team.",
     skills: ["NoSQL", "Figma", "C#", "Prototyping", "Design Systems"],
