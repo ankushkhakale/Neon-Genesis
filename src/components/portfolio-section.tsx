@@ -38,7 +38,16 @@ const projects = [
     image: "https://i.pinimg.com/736x/cf/39/fd/cf39fdc58bcaeb89592b9264c59a2453.jpg",
     description: "Comprehensive brand identity services: logo design, color palette creation, and detailed brand guidelines.",
     link: "https://ankushkhakale.netlify.app/"
-  }
+  },
+  {
+      id: 1,
+      title: "Brain Buddy",
+      category: "Web Design",
+      image: "/lovable-uploads/Brain buddy.jpeg",
+      description: "An AI-powered learning companion that helps students with homework, study planning, and educational support. Features intelligent tutoring and personalized learning paths.",
+      link: "https://brainbuddy-kohl.vercel.app/"
+    },
+
 ];
 
 export function PortfolioSection() {
