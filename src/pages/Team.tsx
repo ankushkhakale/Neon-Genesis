@@ -8,12 +8,13 @@ import { Reveal } from '@/components/ui/reveal';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { Github, Linkedin, Twitter, Code, Brain, Palette } from 'lucide-react';
 import { JoinTeamModal } from '@/components/join-team-modal';
+import { Breadcrumb, breadcrumbConfigs } from '@/components/breadcrumb';
 
 const teamMembers = [
   {
     name: "Ankush Khakale",
     role: "Full-Stack Developer",
-    image: "https://media.licdn.com/dms/image/v2/D4E03AQFhFPMKUIyaBw/profile-displayphoto-shrink_400_400/B4EZTFsYjtGYAg-/0/1738483536336?e=1750291200&v=beta&t=NlQIL1l_IOqbN4A0iK8KZDnqK1eGbT_acR6Kf8jxhyQ",
+    image: "/lovable-uploads/WhatsApp Image 2025-07-04 at 3.41.39 PM.jpeg",
     specialty: "React, GenAI, Python",
     bio: "Passionate about creating elegant solutions to complex problems. When not coding, Ankush enjoys competitive gaming and mountain biking.",
     skills: ["React", "Node.js", "Python", "GenAI", "Google Cloud"],
@@ -27,7 +28,7 @@ const teamMembers = [
   {
     name: "Atharva Jangale",
     role: "AI/ML Enthusiast",
-    image: "https://media.licdn.com/dms/image/v2/D5622AQHKkP1EdMlD9A/feedshare-shrink_1280/B56ZThx9BxGoAs-/0/1738954758452?e=1747872000&v=beta&t=O61CCY5eFQ9chQvueuf6hNwo-IBdPQk5EHGeq-_-RHQ",
+    image: "/lovable-uploads/WhatsApp Image 2025-07-04 at 3.41.37 PM.jpeg",
     specialty: "MCP, Google Cloud, NLP",
     bio: "Fascinated by the possibilities of machine learning. Atharva specializes in creating intelligent solutions that push technology forward.",
     skills: ["TensorFlow", "Python", "IoT", "NLP", "API"],
@@ -41,7 +42,7 @@ const teamMembers = [
   {
     name: "Atharva Jondhale",
     role: "UI/UX Designer & DBMS",
-    image: "https://media.licdn.com/dms/image/v2/D4E03AQE2qIAJH-4XPQ/profile-displayphoto-shrink_400_400/B4EZQ1eV.ZHEAg-/0/1736063935636?e=1750291200&v=beta&t=srCkypWWKhPx2iBPlyuYsCzxqzXsXJ4k7dFOfrVyO_k",
+    image: "/lovable-uploads/jondhale.jpeg",
     specialty: "Database Management, Interaction Design",
     bio: "Creating beautiful and intuitive interfaces is Atharva's passion. He plays an important role in Database Management for the team.",
     skills: ["NoSQL", "Figma", "C#", "Prototyping", "Design Systems"],
@@ -69,7 +70,7 @@ const teamMembers = [
   {
     name: "Mahima Chaudhari",
     role: "UI-UX Designer",
-    image: "https://i.pinimg.com/736x/a9/75/93/a975934bb378afc4ca8c133df451f56e.jpg",
+    image: "/lovable-uploads/WhatsApp Image 2025-07-04 at 3.08.52 PM.jpeg",
     specialty: "UI Design, Team Lead",
     bio: "Mahima shapes the team's design vision while championing a culture of iterative improvement and user-centric innovation.",
     skills: ["UI-Design", "Leadership", "Sketching"],
@@ -186,11 +187,16 @@ const Team = () => {
       <AnimatePresence>
         {loading && <Loader />}
       </AnimatePresence>
-
-      <main className="min-h-screen relative">
-        <div className="absolute inset-0 cyberpunk-grid opacity-20"></div>
+      
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 md:px-6 pt-24">
+          <Breadcrumb items={breadcrumbConfigs.team} />
+        </div>
         
-        <Navbar />
+        <main className="min-h-screen relative">
+          <div className="absolute inset-0 cyberpunk-grid opacity-20"></div>
+          
+          <Navbar />
         
         <section className="pt-32 pb-16 relative z-10">
           <div className="container mx-auto px-4 md:px-6">
@@ -259,7 +265,8 @@ const Team = () => {
         </section>
         
         <Footer />
-      </main>
+        </main>
+      </div>
 
       <JoinTeamModal 
         isOpen={isModalOpen} 
