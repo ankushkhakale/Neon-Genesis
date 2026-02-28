@@ -5,13 +5,7 @@ from entropy import calculate_entropy
 
 WINDOW_SIZE = 5
 
-def clean_old_events(event_buffer):
-    current_time = time.time()
-    while event_buffer and (current_time - event_buffer[0][0] > WINDOW_SIZE):
-        event_buffer.popleft()
-
-def analyze(event_buffer):
-    clean_old_events(event_buffer)
+def analyze(event_buffer_snapshot):
 
     modified = 0
     created = 0
@@ -19,9 +13,18 @@ def analyze(event_buffer):
 
     unique_dirs = set()
     extension_counter = Counter()
-    entropy_values = []
 
-    for timestamp, event_type, path in event_buffer:
+    entropy_values = []
+    high_entropy_count = 0
+
+    current_time = time.time()
+
+    valid_events = [
+        e for e in event_buffer_snapshot
+        if current_time - e[0] <= WINDOW_SIZE
+    ]
+
+    for timestamp, event_type, path in valid_events:
 
         _, ext = os.path.splitext(path)
         if ext:
@@ -31,8 +34,13 @@ def analyze(event_buffer):
 
         if event_type == "modified":
             modified += 1
+
             if os.path.exists(path):
-                entropy_values.append(calculate_entropy(path))
+                ent = calculate_entropy(path)
+                entropy_values.append(ent)
+
+                if ent > 7.5:
+                    high_entropy_count += 1
 
         elif event_type == "created":
             created += 1
@@ -47,13 +55,17 @@ def analyze(event_buffer):
 
     burst_rate = modified / WINDOW_SIZE
 
-    # Extension dominance detection
     dominant_extension = None
     dominance_ratio = 0
 
     if extension_counter:
         dominant_extension, count = extension_counter.most_common(1)[0]
         dominance_ratio = count / sum(extension_counter.values())
+
+    encryption_density = (
+        high_entropy_count / modified
+        if modified > 0 else 0
+    )
 
     return {
         "modified": modified,
@@ -64,5 +76,7 @@ def analyze(event_buffer):
         "avg_entropy": round(avg_entropy, 2),
         "burst_rate": round(burst_rate, 2),
         "dominant_extension": dominant_extension,
-        "extension_dominance": round(dominance_ratio, 2)
+        "extension_dominance": round(dominance_ratio, 2),
+        "high_entropy_files": high_entropy_count,
+        "encryption_density": round(encryption_density, 2)
     }
