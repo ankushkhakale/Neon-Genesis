@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Genesis Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#FE4A23',
+                        accent: '#8D5CFC',
+                        dark: '#0F0F12',
+                        card: 'rgba(255, 255, 255, 0.03)',
+                        border: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    fontFamily: {
+                        sans: ['"Albert Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-dark text-white font-sans h-screen flex overflow-hidden selection:bg-brand selection:text-white">
+    <!-- Sidebar -->
+    <aside class="w-64 border-r border-border flex flex-col pt-6 glass-panel">
+        <div class="px-6 mb-8 flex items-center gap-3">
+            <div class="w-8 h-8 rounded bg-brand flex items-center justify-center font-bold text-dark">N</div>
+            <h1 class="text-xl font-bold tracking-widest uppercase">Neon Genesis</h1>
+        </div>
+        <nav class="flex-1 px-4 space-y-2">
+            <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-card text-brand border border-border transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Dashboard
+            </a>
+            <a href="processes.html" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-card text-gray-400 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                Processes
+            </a>
+            <a href="backup.html" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-card text-gray-400 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                Backups
+            </a>
+        </nav>
+        <div class="p-6 border-t border-border">
+            <button id="scanBtn" class="w-full py-3 bg-brand text-dark font-bold rounded-lg hover:bg-opacity-90 transition-all shadow-[0_0_15px_rgba(254,74,35,0.4)]">
+                Quick Scan
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative" id="mainContainer">
+        <!-- Topbar -->
+        <header class="h-20 border-b border-border flex items-center justify-between px-8 glass-panel z-10">
+            <div>
+                <h2 class="text-2xl font-bold">System Overview</h2>
+                <p class="text-sm text-gray-400">Real-time threat telemetry</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span class="text-sm text-gray-400">Engine Active</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Grid -->
+        <div class="flex-1 overflow-auto p-8 relative">
+            <div class="grid grid-cols-12 gap-6 max-w-[1600px] mx-auto">
+                <!-- Risk Score Card -->
+                <div class="col-span-12 md:col-span-4 card p-6 flex flex-col justify-center items-center relative overflow-hidden" id="riskCard">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand/10 to-transparent"></div>
+                    <h3 class="text-gray-400 text-sm font-semibold mb-2 z-10 uppercase tracking-widest">Global Risk Score</h3>
+                    <div class="text-7xl font-bold text-white z-10" id="riskScore">0</div>
+                    <p class="text-xs text-brand mt-4 z-10" id="riskStatus">Initializing...</p>
+                </div>
+
+                <!-- Active Sessions -->
+                <div class="col-span-12 md:col-span-4 card p-6 flex flex-col justify-center">
+                    <h3 class="text-gray-400 text-sm font-semibold mb-2 uppercase tracking-widest">Modified Files/sec</h3>
+                    <div class="text-4xl font-bold text-white" id="modRate">0.0</div>
+                    <div class="mt-4 w-full bg-dark rounded-full h-2 overflow-hidden border border-border">
+                        <div class="bg-accent h-full w-1/4 transition-all" id="modBar"></div>
+                    </div>
+                </div>
+
+                <!-- Entropy Average -->
+                <div class="col-span-12 md:col-span-4 card p-6 flex flex-col justify-center">
+                    <h3 class="text-gray-400 text-sm font-semibold mb-2 uppercase tracking-widest">Avg Entropy</h3>
+                    <div class="text-4xl font-bold text-white" id="entropyVal">0.0</div>
+                    <p class="text-xs text-gray-500 mt-2">Threshold: 7.5 (Encryption likely)</p>
+                </div>
+
+                <!-- Charts -->
+                <div class="col-span-12 lg:col-span-6 card p-6 h-80">
+                    <h3 class="text-gray-400 text-sm font-semibold mb-4 uppercase tracking-widest flex justify-between">
+                        CPU Activity
+                        <span class="text-accent" id="cpuVal">0%</span>
+                    </h3>
+                    <div class="relative h-[220px] w-full">
+                        <canvas id="cpuChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-span-12 lg:col-span-6 card p-6 h-80">
+                    <h3 class="text-gray-400 text-sm font-semibold mb-4 uppercase tracking-widest flex justify-between">
+                        Entropy History
+                    </h3>
+                    <div class="relative h-[220px] w-full">
+                        <canvas id="entropyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Suspicious Processes -->
+                <div class="col-span-12 card p-6 mb-8">
+                    <h3 class="text-gray-400 text-sm font-semibold mb-4 uppercase tracking-widest border-b border-border pb-4">Suspicious Activity Log</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-xs text-gray-500 uppercase border-b border-border bg-dark/50">
+                                    <th class="p-3 font-medium">PID</th>
+                                    <th class="p-3 font-medium">Process Name</th>
+                                    <th class="p-3 font-medium">CPU %</th>
+                                    <th class="p-3 font-medium">Risk Score</th>
+                                    <th class="p-3 font-medium">Status</th>
+                                    <th class="p-3 font-medium text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="suspiciousTableBody" class="text-sm">
+                                <tr>
+                                    <td colspan="6" class="p-6 text-center text-gray-500">No suspicious processes detected</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Modal Triggered by JS -->
+        <div id="alertModal" class="hidden absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center">
+            <div class="bg-dark border border-brand p-8 rounded-2xl shadow-[0_0_50px_rgba(254,74,35,0.3)] max-w-md w-full text-center slide-up">
+                <div class="w-20 h-20 mx-auto bg-brand/20 rounded-full flex items-center justify-center mb-6">
+                    <svg class="w-10 h-10 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Suspicious encryption activity detected</h2>
+                <p class="text-gray-400 mb-8">High entropy file modifications detected across multiple directories.</p>
+                <div class="flex flex-col gap-3">
+                    <button class="modal-btn bg-brand text-dark hover:bg-opacity-90" id="btnModalKill">Kill Processes</button>
+                    <button class="modal-btn bg-card border border-border text-white hover:bg-white/10" id="btnModalSuspend">Suspend Processes</button>
+                    <button class="modal-btn text-gray-400 hover:text-white mt-2" id="btnModalIgnore">Ignore Warning</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

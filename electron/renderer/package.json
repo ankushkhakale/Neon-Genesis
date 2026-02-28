@@ -1,0 +1,12 @@
+{
+    "name": "neon-genesis",
+    "version": "1.0.0",
+    "description": "Behavioral Ransomware Detection Dashboard",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron ."
+    },
+    "devDependencies": {
+        "electron": "^28.3.3"
+    }
+}
