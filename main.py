@@ -19,9 +19,8 @@ def main():
         while True:
             time.sleep(1)
 
-            buffer = get_buffer()
+            buffer = list(get_buffer())   # snapshot copy
             features = analyze(buffer)
-
             risk, suspicious = calculate_risk(features)
 
             print(features)
