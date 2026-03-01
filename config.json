@@ -1,0 +1,6 @@
+{
+  "monitor_path": "/home/mohit/TestingDirectory",
+  "risk_threshold": 60,
+  "entropy_threshold": 7.5,
+  "auto_containment": true
+}
