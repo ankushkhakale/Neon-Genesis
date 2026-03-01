@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;" />
+  <title>PROMETHEUS — Ransomware Detection Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-text">PR</span>
+      <span class="logo-label">PROMETHEUS</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" id="nav-dashboard" data-page="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+        </svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" id="nav-processes" data-page="processes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <span>Processes</span>
+      </button>
+      <button class="nav-item" id="nav-backups" data-page="backups">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+        <span>Backups</span>
+      </button>
+      <button class="nav-item" id="nav-timeline" data-page="timeline">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="20" x2="12" y2="10" />
+          <line x1="18" y1="20" x2="18" y2="4" />
+          <line x1="6" y1="20" x2="6" y2="16" />
+        </svg>
+        <span>Timeline</span>
+      </button>
+      <button class="nav-item" id="nav-settings" data-page="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3" />
+          <path
+            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+        </svg>
+        <span>Settings</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="monitor-toggle-wrap">
+        <span class="monitor-label" id="monitor-label">Start Monitoring</span>
+        <button class="monitor-toggle" id="monitor-toggle" aria-label="Toggle Monitoring">
+          <span class="toggle-dot"></span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="main-content">
+
+    <!-- ═══ DASHBOARD PAGE ═══ -->
+    <section class="page active" id="page-dashboard">
+      <!-- Top Hero -->
+      <div class="dash-hero">
+        <div class="dash-hero-left">
+          <div class="protocol-label">GLOBAL RISK PROTOCOL</div>
+          <div class="risk-score-wrap">
+            <span class="risk-score-number" id="risk-score">0</span>
+            <span class="risk-score-max">/100</span>
+          </div>
+          <div class="threat-badge" id="threat-badge">NORMAL</div>
+        </div>
+        <div class="dash-hero-right">
+          <button class="hero-toggle-btn" id="hero-toggle-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="12" r="10" />
+              <polygon points="10 8 16 12 10 16 10 8" />
+            </svg>
+            <span id="hero-toggle-text">Start Detection</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">VOLUME / BURST ACTIVITY</div>
+          <div class="chart-subtitle" id="burst-label">0.00 modifications/sec</div>
+          <canvas id="burst-chart" width="100%" height="160"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">FILE ENTROPY DEVIATION</div>
+          <div class="chart-subtitle" id="entropy-label">0.00 avg entropy</div>
+          <canvas id="entropy-chart" width="100%" height="160"></canvas>
+        </div>
+      </div>
+
+      <!-- Bottom Section -->
+      <div class="bottom-row">
+        <div class="processes-card">
+          <div class="section-header">
+            <span class="section-title">TARGETED PROCESSES</span>
+            <span class="section-badge" id="proc-count">0 escalated</span>
+          </div>
+          <table class="threat-table" id="proc-table">
+            <thead>
+              <tr>
+                <th>PID</th>
+                <th>Binary</th>
+                <th>CPU %</th>
+                <th>Risk</th>
+                <th>State</th>
+                <th>Containment</th>
+              </tr>
+            </thead>
+            <tbody id="proc-tbody"></tbody>
+          </table>
+          <div class="table-empty" id="proc-empty">No escalated processes detected.</div>
+        </div>
+
+        <div class="audit-card">
+          <div class="section-header">
+            <span class="section-title">SECURITY AUDIT TRAIL</span>
+            <button class="btn-sm" id="fetch-logs-btn">Fetch Logs</button>
+          </div>
+          <div class="audit-log" id="audit-log">
+            <div class="audit-empty">Audit trail is empty. Start monitoring to capture events.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PROCESSES PAGE ═══ -->
+    <section class="page" id="page-processes">
+      <div class="page-header">
+        <h1 class="page-title">Suspicious Processes</h1>
+        <p class="page-subtitle">Only escalated processes with elevated threat indicators are shown.</p>
+      </div>
+      <div class="card">
+        <table class="threat-table" id="proc-full-table">
+          <thead>
+            <tr>
+              <th>PID</th>
+              <th>Binary</th>
+              <th>CPU %</th>
+              <th>Risk</th>
+              <th>State</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="proc-full-tbody"></tbody>
+        </table>
+        <div class="table-empty" id="proc-full-empty">No suspicious processes currently detected.</div>
+      </div>
+    </section>
+
+    <!-- ═══ BACKUPS PAGE ═══ -->
+    <section class="page" id="page-backups">
+      <div class="page-header">
+        <h1 class="page-title">Backups &amp; Snapshots</h1>
+        <p class="page-subtitle">Create and restore zip-based directory snapshots.</p>
+      </div>
+
+      <div class="card backup-create-card">
+        <div class="section-title">Create Manual Snapshot</div>
+        <div class="backup-input-row">
+          <input class="input-field" id="backup-path-input" type="text" placeholder="/home/mohit/TestingDirectory" />
+          <input class="input-field backup-name-input" id="backup-name-input" type="text"
+            placeholder="Optional name..." />
+          <button class="btn-primary" id="backup-create-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            Snapshot Now
+          </button>
+        </div>
+        <div class="backup-status" id="backup-status"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">Available Snapshots</span>
+          <button class="btn-sm" id="backup-refresh-btn">Refresh</button>
+        </div>
+        <div id="backup-list" class="backup-list"></div>
+        <div class="table-empty" id="backup-empty">No snapshots available.</div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Operation Log</div>
+        <div class="audit-log" id="backup-log">
+          <div class="audit-empty">No operations yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ TIMELINE PAGE ═══ -->
+    <section class="page" id="page-timeline">
+      <div class="page-header">
+        <h1 class="page-title">Threat Timeline</h1>
+        <p class="page-subtitle">Chronological threat events, color-coded by severity.</p>
+      </div>
+      <div class="card">
+        <div id="timeline-feed" class="timeline-feed">
+          <div class="audit-empty">No threat events recorded yet. Start monitoring to populate the timeline.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SETTINGS PAGE ═══ -->
+    <section class="page" id="page-settings">
+      <div class="page-header">
+        <h1 class="page-title">Settings</h1>
+        <p class="page-subtitle">Configure detection parameters. Changes persist to config.json.</p>
+      </div>
+      <div class="card settings-card">
+        <div class="setting-group">
+          <label class="setting-label" for="s-monitor-path">Monitor Path</label>
+          <input class="input-field" id="s-monitor-path" type="text" placeholder="/home/mohit/TestingDirectory" />
+          <span class="setting-hint">Directory to watch for ransomware behavior. Auto-created if missing.</span>
+        </div>
+        <div class="setting-group">
+          <label class="setting-label" for="s-risk-threshold">Risk Threshold</label>
+          <div class="slider-wrap">
+            <input class="slider" id="s-risk-threshold" type="range" min="10" max="100" step="1" value="60" />
+            <span class="slider-value" id="s-risk-threshold-val">60</span>
+          </div>
+          <span class="setting-hint">Score at which CONTAINING state is triggered.</span>
+        </div>
+        <div class="setting-group">
+          <label class="setting-label" for="s-entropy-threshold">Entropy Threshold</label>
+          <div class="slider-wrap">
+            <input class="slider" id="s-entropy-threshold" type="range" min="5" max="8" step="0.1" value="7.5" />
+            <span class="slider-value" id="s-entropy-threshold-val">7.5</span>
+          </div>
+          <span class="setting-hint">Shannon entropy level that flags files as high-entropy (encrypted).</span>
+        </div>
+        <div class="setting-group setting-toggle-group">
+          <label class="setting-label">Auto Containment</label>
+          <div class="toggle-wrap">
+            <button class="toggle-btn active" id="s-auto-containment" aria-pressed="true">
+              <span class="toggle-knob"></span>
+            </button>
+            <span class="toggle-state-label" id="s-auto-containment-label">Enabled</span>
+          </div>
+          <span class="setting-hint">Automatically trigger containment when risk threshold is crossed.</span>
+        </div>
+        <div class="settings-actions">
+          <button class="btn-primary" id="settings-save-btn">Save Configuration</button>
+          <span class="save-status" id="save-status"></span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

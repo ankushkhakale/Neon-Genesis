@@ -1,0 +1,16 @@
+{
+    "timestamp": "2026-03-01T08:56:12.687946",
+    "modified": 0,
+    "created": 0,
+    "deleted": 0,
+    "unique_dirs": 0,
+    "unique_extensions": 0,
+    "avg_entropy": 0,
+    "burst_rate": 0.0,
+    "dominant_extension": null,
+    "extension_dominance": 0,
+    "high_entropy_files": 0,
+    "encryption_density": 0,
+    "risk_score": 0,
+    "suspicious": false
+}

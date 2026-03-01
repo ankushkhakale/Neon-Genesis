@@ -1,0 +1,16 @@
+{
+    "name": "neon-genesis",
+    "version": "1.0.0",
+    "description": "NEON GENESIS — Behavioral Ransomware Detection Console",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "dev": "electron ."
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "electron": "^29.0.0"
+    },
+    "author": "Neon Genesis Team",
+    "license": "MIT"
+}

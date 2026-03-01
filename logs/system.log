@@ -1,0 +1,45 @@
+2026-03-01T08:29:00 | Scan started via API.
+2026-03-01T08:29:00 | Core engine modules loaded.
+2026-03-01T08:29:00 | Monitor path ready: /home/mohit/TestingDirectory
+2026-03-01T08:29:00 | Watchdog observer started.
+2026-03-01T08:33:56 | Scan loop cancelled.
+2026-03-01T08:33:56 | Watchdog observer stopped.
+2026-03-01T08:33:56 | Scan stopped via API.
+2026-03-01T08:34:25 | Config updated: {'monitor_path': '/home/mohit', 'risk_threshold': 60, 'entropy_threshold': 7.5, 'auto_containment': True}
+2026-03-01T08:34:29 | Scan started via API.
+2026-03-01T08:34:29 | Core engine modules loaded.
+2026-03-01T08:34:29 | Monitor path ready: /home/mohit
+2026-03-01T08:34:42 | Watchdog observer started.
+2026-03-01T08:34:47 | Config updated: {'monitor_path': '/home/mohit', 'risk_threshold': 60, 'entropy_threshold': 7.5, 'auto_containment': True}
+2026-03-01T08:34:54 | 2026-03-01T08:34:54.783589 | WATCH | risk=25 | entropy=3.94 | burst=8.2 | STATE_CHANGE
+2026-03-01T08:34:57 | 2026-03-01T08:34:57.951118 | NORMAL | risk=15 | entropy=5.64 | burst=3.2 | STATE_CHANGE
+2026-03-01T08:35:52 | 2026-03-01T08:35:52.950223 | SUSPICIOUS | risk=35 | entropy=4.08 | burst=16.2 | STATE_CHANGE
+2026-03-01T08:35:55 | 2026-03-01T08:35:55.073553 | NORMAL | risk=10 | entropy=5.82 | burst=11.2 | STATE_CHANGE
+2026-03-01T08:36:16 | 2026-03-01T08:36:16.131407 | WATCH | risk=25 | entropy=5.67 | burst=5.0 | STATE_CHANGE
+2026-03-01T08:36:20 | 2026-03-01T08:36:20.359554 | NORMAL | risk=10 | entropy=3.45 | burst=12.8 | STATE_CHANGE
+2026-03-01T08:37:20 | 2026-03-01T08:37:20.655942 | WATCH | risk=25 | entropy=5.56 | burst=7.4 | STATE_CHANGE
+2026-03-01T08:37:21 | 2026-03-01T08:37:21.722182 | NORMAL | risk=10 | entropy=3.48 | burst=13.4 | STATE_CHANGE
+2026-03-01T08:37:22 | 2026-03-01T08:37:22.784143 | WATCH | risk=25 | entropy=3.5 | burst=13.6 | STATE_CHANGE
+2026-03-01T08:37:27 | 2026-03-01T08:37:27.035923 | NORMAL | risk=0 | entropy=5.44 | burst=7.6 | STATE_CHANGE
+2026-03-01T08:37:32 | 2026-03-01T08:37:32.325832 | WATCH | risk=25 | entropy=5.16 | burst=7.6 | STATE_CHANGE
+2026-03-01T08:37:33 | 2026-03-01T08:37:33.378542 | NORMAL | risk=10 | entropy=5.16 | burst=7.8 | STATE_CHANGE
+2026-03-01T08:37:51 | 2026-03-01T08:37:51.364930 | WATCH | risk=25 | entropy=5.52 | burst=6.6 | STATE_CHANGE
+2026-03-01T08:37:52 | 2026-03-01T08:37:52.446736 | NORMAL | risk=10 | entropy=3.07 | burst=13.2 | STATE_CHANGE
+2026-03-01T08:39:11 | Scan loop cancelled.
+2026-03-01T08:39:11 | Watchdog observer stopped.
+2026-03-01T08:39:11 | Scan stopped via API.
+2026-03-01T08:47:34 | Scan started via API.
+2026-03-01T08:47:34 | Monitor path ready: /home/mohit
+2026-03-01T08:47:40 | Watchdog observer started.
+2026-03-01T08:47:57 | Config updated: {'monitor_path': '/home/mohit/TestingDirectory', 'risk_threshold': 60, 'entropy_threshold': 7.5, 'auto_containment': True}
+2026-03-01T08:48:10 | Scan loop cancelled.
+2026-03-01T08:48:10 | Watchdog observer stopped.
+2026-03-01T08:48:10 | Scan stopped via API.
+2026-03-01T08:48:12 | Scan started via API.
+2026-03-01T08:48:12 | Monitor path ready: /home/mohit/TestingDirectory
+2026-03-01T08:48:12 | Watchdog observer started.
+2026-03-01T08:49:45 | 2026-03-01T08:49:45.127316 | SUSPICIOUS | risk=40 | entropy=0 | burst=30.0 | STATE_CHANGE
+2026-03-01T08:49:50 | 2026-03-01T08:49:50.348578 | NORMAL | risk=0 | entropy=0 | burst=0.0 | STATE_CHANGE
+2026-03-01T08:56:13 | Scan loop cancelled.
+2026-03-01T08:56:13 | Watchdog observer stopped.
+2026-03-01T08:56:13 | Scan stopped via API.
