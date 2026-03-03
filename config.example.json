@@ -1,0 +1,11 @@
+{
+    "monitor_path": "/path/to/your/directory",
+    "risk_threshold": 60,
+    "entropy_threshold": 7.5,
+    "auto_containment": true,
+    "gcs_enabled": true,
+    "gcs_bucket_name": "your-gcs-bucket-name",
+    "gcs_credentials": "gcs_key.json",
+    "gemini_api_key": "YOUR_GEMINI_API_KEY_HERE",
+    "gemini_model": "gemini-2.5-flash"
+}

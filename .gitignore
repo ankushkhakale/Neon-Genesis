@@ -1,0 +1,43 @@
+# ============================
+# SECURITY - NEVER UPLOAD THESE
+# ============================
+gcs_key.json
+config.json
+"config (1).json"
+
+# ============================
+# Python
+# ============================
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# ============================
+# Node / Electron
+# ============================
+node_modules/
+
+# ============================
+# Logs, Backups, Runtime Data
+# ============================
+logs/
+backups/
+detection_output.json
+*.log
+
+# ============================
+# Personal / Miscellaneous Documents
+# ============================
+*.pdf
+*.docx
+"requirements (1).txt"
+
+# ============================
+# OS Generated Files
+# ============================
+.DS_Store
+Thumbs.db
