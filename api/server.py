@@ -33,6 +33,9 @@ CONFIG_PATH = PROJECT_ROOT / "config.json"
 # Add core/ to sys.path so we can import without touching core files
 if str(CORE_DIR) not in sys.path:
     sys.path.insert(0, str(CORE_DIR))
+# Also ensure project root is on path for cloud_storage, etc.
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 LOGS_DIR.mkdir(exist_ok=True)
 BACKUPS_DIR.mkdir(exist_ok=True)
@@ -66,6 +69,11 @@ DEFAULT_CONFIG: Dict[str, Any] = {
     "risk_threshold": 60,
     "entropy_threshold": 7.5,
     "auto_containment": True,
+    "gcs_enabled": True,
+    "gcs_bucket_name": "prometheus-backups-123",
+    "gcs_credentials": "gcs_key.json",
+    "gemini_api_key": "",
+    "gemini_model": "gemini-2.0-flash",
 }
 
 def load_config() -> Dict[str, Any]:
@@ -116,6 +124,18 @@ metrics_store: Dict[str, Any] = {
 timeline_events: deque = deque(maxlen=500)
 threat_log_entries: deque = deque(maxlen=500)
 
+# AI verdict store — ALL verdicts including benign
+ai_verdicts: deque = deque(maxlen=100)
+# AI notifications — ONLY confirmed SUSPICIOUS/RANSOMWARE (after false-positive filtering)
+ai_notifications: deque = deque(maxlen=50)
+_last_ai_state = "NORMAL"       # avoid spamming overall-threat AI on every tick
+_ai_analyzed_pids: set = set()  # PIDs already sent to AI — avoid re-analyzing
+
+
+# Persistent registry: keyed by PID, never wiped by a new scan tick.
+# Entries are only removed when the process is confirmed dead or user clears it.
+suspicious_registry: Dict[int, Dict[str, Any]] = {}
+
 # ─── Core Engine Lazy Imports ─────────────────────────────────────────────────────
 _collector_mod = None
 _analyzer_mod = None
@@ -144,32 +164,70 @@ def _load_core():
 PROTECTED_NAMES = {"python", "python3", "node", "electron", "uvicorn", "systemd", "init"}
 PROTECTED_MIN_PID = 2
 
-def get_suspicious_processes(risk: int) -> List[Dict[str, Any]]:
-    """Return processes with elevated CPU that may indicate ransomware activity."""
+def _update_process_registry(risk: int) -> None:
+    """
+    Scan live processes and feed the persistent registry.
+    New suspicious processes are ADDED. Existing entries are UPDATED with fresh CPU.
+    Entries are only REMOVED if the process no longer exists (confirmed dead).
+    """
+    global suspicious_registry
+    live_pids: set = set()
+
     try:
-        procs = []
         for proc in psutil.process_iter(["pid", "name", "cpu_percent", "status"]):
             try:
                 info = proc.info
+                pid = info["pid"]
                 cpu = proc.cpu_percent(interval=None)
-                if cpu > 5.0 or risk > 50:
+                is_escalated = cpu > 10.0 or risk > 50
+
+                if is_escalated:
+                    live_pids.add(pid)
                     state = "SUSPICIOUS" if (cpu > 20 or risk > 70) else "WATCH"
-                    procs.append({
-                        "pid": info["pid"],
+                    entry = {
+                        "pid": pid,
                         "binary": info["name"] or "unknown",
                         "cpu": round(cpu, 1),
-                        "risk": min(int(cpu * 1.5), 100),
+                        "risk": min(int(cpu * 1.5 + risk * 0.3), 100),
                         "state": state,
                         "containment": "ACTIVE" if state == "SUSPICIOUS" and risk > 70 else "NONE",
-                    })
-                    if len(procs) >= 30:
-                        break
+                        "first_seen": suspicious_registry.get(pid, {}).get("first_seen", datetime.now().isoformat()),
+                        "last_seen": datetime.now().isoformat(),
+                        "alive": True,
+                    }
+                    suspicious_registry[pid] = entry
+                elif pid in suspicious_registry:
+                    # Process dropped below threshold but is still alive — mark but keep it
+                    suspicious_registry[pid]["cpu"] = round(cpu, 1)
+                    suspicious_registry[pid]["state"] = "WATCH"
+                    suspicious_registry[pid]["last_seen"] = datetime.now().isoformat()
+                    suspicious_registry[pid]["alive"] = True
+                    live_pids.add(pid)
+
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
-        return sorted(procs, key=lambda p: p["cpu"], reverse=True)
     except Exception as e:
-        log.error(f"Process scan error: {e}")
-        return []
+        log.error(f"Process registry scan error: {e}")
+        return
+
+    # Mark dead any registry entries whose PID is gone from the system
+    to_remove = []
+    for pid in list(suspicious_registry.keys()):
+        if pid not in live_pids:
+            try:
+                psutil.Process(pid)  # will raise if dead
+            except psutil.NoSuchProcess:
+                suspicious_registry[pid]["alive"] = False
+                suspicious_registry[pid]["state"] = "DEAD"
+            except psutil.AccessDenied:
+                pass
+
+
+def get_suspicious_processes(risk: int) -> List[Dict[str, Any]]:
+    """Update registry and return all flagged entries (alive + dead)."""
+    _update_process_registry(risk)
+    entries = list(suspicious_registry.values())
+    return sorted(entries, key=lambda p: (p["alive"], p["cpu"]), reverse=True)
 
 # ─── Scan Loop ───────────────────────────────────────────────────────────────────
 async def _scan_loop():
@@ -238,6 +296,25 @@ async def _scan_loop():
                 log.info(log_line)
                 threat_log_entries.appendleft(log_line)
 
+                # Auto-trigger AI analysis on escalation (non-blocking background task)
+                global _last_ai_state
+                if state in ("SUSPICIOUS", "CONTAINING", "LOCKDOWN") and state != _last_ai_state:
+                    _last_ai_state = state
+                    asyncio.create_task(_run_ai_threat_analysis(risk, state, features, procs, cfg))
+                elif state in ("NORMAL", "WATCH"):
+                    _last_ai_state = state
+
+            # ─── Per-Process AI False-Positive Filter ───────────────────────────────
+            # For each newly flagged process, fire AI analysis as a background task.
+            # AI decides: BENIGN → suppress notification; SUSPICIOUS/RANSOMWARE → notify.
+            global _ai_analyzed_pids
+            for pid, pinfo in list(suspicious_registry.items()):
+                if (pid not in _ai_analyzed_pids
+                        and pinfo.get("alive", True)
+                        and not pinfo.get("ai_cleared", False)):
+                    _ai_analyzed_pids.add(pid)
+                    asyncio.create_task(_run_ai_process_analysis(pid, pinfo, cfg))
+
             # Containment — trigger once per state transition into CONTAINING/LOCKDOWN
             if cfg.get("auto_containment", True):
                 if state in ("CONTAINING", "LOCKDOWN") and not containment_triggered:
@@ -287,6 +364,183 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ─── AI Background Helper ─────────────────────────────────────────────────────────
+async def _run_ai_threat_analysis(risk: int, state: str, features: dict, procs: list, cfg: dict):
+    """Called as an asyncio background task from the scan loop — never blocks scanning."""
+    api_key = cfg.get("gemini_api_key", "")
+    if not api_key:
+        return
+    import api.ai_analyst as ai
+    loop = asyncio.get_event_loop()
+    verdict = await loop.run_in_executor(
+        None,
+        lambda: ai.analyze_threat(
+            api_key=api_key,
+            risk_score=risk,
+            threat_state=state,
+            burst_rate=features.get("burst_rate", 0.0),
+            avg_entropy=features.get("avg_entropy", 0.0),
+            features=features,
+            processes=procs,
+            monitor_path=cfg.get("monitor_path", ""),
+        ),
+    )
+    ai_verdicts.appendleft(verdict)
+
+async def _run_ai_process_analysis(pid: int, proc_info: dict, cfg: dict):
+    """
+    AI false-positive filter layer:
+    Auto-called when a new process is flagged as suspicious.
+    - If AI says BENIGN → mark as benign in registry (suppresses notification)
+    - If AI says SUSPICIOUS/RANSOMWARE → add to ai_notifications for UI alert
+    This prevents false positives from cluttering the UI.
+    """
+    global _ai_analyzed_pids
+    api_key = cfg.get("gemini_api_key", "")
+    if not api_key:
+        return
+    try:
+        import api.ai_analyst as ai
+        proc = psutil.Process(pid)
+        try:    cmdline = " ".join(proc.cmdline())
+        except: cmdline = ""
+        try:    open_files = [f.path for f in proc.open_files()][:15]
+        except: open_files = []
+        try:    conns = [f"{c.laddr}→{c.raddr}" for c in proc.net_connections()][:5]
+        except: conns = []
+
+        loop = asyncio.get_event_loop()
+        verdict = await loop.run_in_executor(
+            None,
+            lambda: ai.analyze_process(
+                api_key=api_key,
+                pid=pid,
+                binary=proc_info.get("binary", "unknown"),
+                username=proc_info.get("username", "?"),
+                cpu=proc_info.get("cpu", 0.0),
+                mem_kb=0,
+                status=proc_info.get("status", "?"),
+                cmdline=cmdline,
+                open_files=open_files,
+                connections=conns,
+            ),
+        )
+        ai_verdicts.appendleft(verdict)
+
+        # ─── THE FILTER LAYER ───────────────────────────────────────────────────
+        if verdict.get("verdict") == "BENIGN":
+            # False positive — remove from suspicious registry silently
+            if pid in suspicious_registry:
+                suspicious_registry[pid]["ai_verdict"] = "BENIGN"
+                suspicious_registry[pid]["ai_cleared"] = True
+                suspicious_registry[pid]["state"] = "WATCH"  # demote
+            log.info(f"[AI] PID {pid} ({proc_info.get('binary')}) → BENIGN (false positive cleared)")
+        else:
+            # Real threat — push to notifications feed
+            notif = {**verdict, "auto_detected": True}
+            ai_notifications.appendleft(notif)
+            log.warning(f"[AI] PID {pid} ({proc_info.get('binary')}) → {verdict.get('verdict')} CONFIRMED")
+
+    except (psutil.NoSuchProcess, psutil.AccessDenied):
+        _ai_analyzed_pids.discard(pid)  # allow retry if process restarts
+    except Exception as e:
+        log.error(f"[AI] process analysis PID {pid} error: {e}")
+
+# ─── AI Endpoints ─────────────────────────────────────────────────────────────────
+@app.get("/ai/status")
+async def ai_status():
+    cfg = load_config()
+    api_key = cfg.get("gemini_api_key", "")
+    model = cfg.get("gemini_model", "gemini-2.0-flash")
+    if not api_key:
+        return {"available": False, "message": "No API key configured.", "model": model}
+    import api.ai_analyst as ai
+    loop = asyncio.get_event_loop()
+    ok, msg = await loop.run_in_executor(None, lambda: ai.test_ai_connection(api_key))
+    return {"available": ok, "message": msg, "model": model}
+
+@app.get("/ai/verdicts")
+async def get_ai_verdicts(limit: int = 50):
+    return {"verdicts": list(ai_verdicts)[:limit], "count": len(ai_verdicts)}
+
+@app.get("/ai/notifications")
+async def get_ai_notifications(limit: int = 20):
+    """Returns only confirmed SUSPICIOUS/RANSOMWARE verdicts — post false-positive filter.
+    Frontend polls this for toast/alert notifications."""
+    return {"notifications": list(ai_notifications)[:limit], "count": len(ai_notifications)}
+
+class AnalyzeProcessRequest(BaseModel):
+    pid: int
+
+@app.post("/ai/analyze-process")
+async def ai_analyze_process(body: AnalyzeProcessRequest):
+    cfg = load_config()
+    api_key = cfg.get("gemini_api_key", "")
+    if not api_key:
+        raise HTTPException(status_code=400, detail="Gemini API key not configured.")
+    try:
+        proc = psutil.Process(body.pid)
+        try:
+            cmdline = " ".join(proc.cmdline())
+        except Exception:
+            cmdline = ""
+        try:
+            open_files = [f.path for f in proc.open_files()]
+        except Exception:
+            open_files = []
+        try:
+            conns = [f"{c.laddr}→{c.raddr} [{c.status}]" for c in proc.net_connections()]
+        except Exception:
+            conns = []
+        info = proc.as_dict(attrs=["pid", "name", "username", "cpu_percent", "memory_info", "status"])
+        import api.ai_analyst as ai
+        loop = asyncio.get_event_loop()
+        verdict = await loop.run_in_executor(
+            None,
+            lambda: ai.analyze_process(
+                api_key=api_key,
+                pid=body.pid,
+                binary=info.get("name") or "unknown",
+                username=info.get("username") or "?",
+                cpu=proc.cpu_percent(interval=0.1),
+                mem_kb=(info.get("memory_info").rss // 1024) if info.get("memory_info") else 0,
+                status=info.get("status") or "?",
+                cmdline=cmdline,
+                open_files=open_files,
+                connections=conns,
+            ),
+        )
+        ai_verdicts.appendleft(verdict)
+        return verdict
+    except psutil.NoSuchProcess:
+        raise HTTPException(status_code=404, detail=f"Process {body.pid} not found.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class SummaryRequest(BaseModel):
+    include_verdicts: bool = True
+
+@app.post("/ai/generate-summary")
+async def ai_generate_summary(body: SummaryRequest):
+    cfg = load_config()
+    api_key = cfg.get("gemini_api_key", "")
+    if not api_key:
+        raise HTTPException(status_code=400, detail="Gemini API key not configured.")
+    verdicts_to_include = list(ai_verdicts)[:10] if body.include_verdicts else []
+    import api.ai_analyst as ai
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(
+        None,
+        lambda: ai.generate_incident_summary(
+            api_key=api_key,
+            events=list(timeline_events)[:30],
+            metrics=dict(metrics_store),
+            verdicts=verdicts_to_include,
+            monitor_path=cfg.get("monitor_path", ""),
+        ),
+    )
+    return result
 
 # ─── Scan Endpoints ──────────────────────────────────────────────────────────────
 @app.post("/scan/start")
@@ -371,44 +625,120 @@ async def update_config(body: ConfigUpdate):
 # ─── Process Endpoints ───────────────────────────────────────────────────────────
 @app.get("/processes")
 async def list_processes():
-    return {"processes": metrics_store["suspicious_processes"]}
+    # Always return the full registry (persistent, includes dead/cleared entries)
+    entries = list(suspicious_registry.values())
+    return {"processes": sorted(entries, key=lambda p: (p.get("alive", True), p.get("cpu", 0)), reverse=True)}
+
+@app.get("/processes/all")
+async def list_all_processes():
+    """Return every running process, annotated with threat flags and monitor-dir activity."""
+    cfg = load_config()
+    monitor_path = cfg.get("monitor_path", "").rstrip("/")
+    result = []
+    try:
+        for proc in psutil.process_iter(["pid", "name", "cpu_percent", "status", "username"]):
+            try:
+                info = proc.info
+                pid = info["pid"]
+                cpu = proc.cpu_percent(interval=None)
+                try:
+                    mem_kb = proc.memory_info().rss // 1024
+                except Exception:
+                    mem_kb = 0
+                # Check if process has files open inside the monitored directory
+                in_monitored_dir = False
+                if monitor_path:
+                    try:
+                        for f in proc.open_files():
+                            if f.path.startswith(monitor_path):
+                                in_monitored_dir = True
+                                break
+                    except (psutil.AccessDenied, psutil.NoSuchProcess, OSError):
+                        pass
+                flagged = pid in suspicious_registry
+                reg = suspicious_registry.get(pid, {})
+                result.append({
+                    "pid": pid,
+                    "binary": info["name"] or "unknown",
+                    "cpu": round(cpu, 1),
+                    "mem_kb": mem_kb,
+                    "status": info.get("status") or "unknown",
+                    "username": info.get("username") or "?",
+                    "flagged": flagged,
+                    "in_monitored_dir": in_monitored_dir,
+                    "state": reg.get("state", "NORMAL") if flagged else "NORMAL",
+                    "risk": reg.get("risk", 0) if flagged else 0,
+                    "alive": reg.get("alive", True),
+                })
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                continue
+    except Exception as e:
+        log.error(f"/processes/all error: {e}")
+    # Sort: monitor-dir processes first, then flagged, then by CPU desc
+    result.sort(key=lambda p: (not p["in_monitored_dir"], not p["flagged"], -p["cpu"]))
+    return {"processes": result, "total": len(result)}
+
+@app.post("/processes/clear/{pid}")
+async def clear_process(pid: int):
+    """Manually dismiss a process from the registry (does not kill it)."""
+    suspicious_registry.pop(pid, None)
+    log.info(f"Process {pid} cleared from registry.")
+    return {"status": "cleared", "pid": pid}
+
+@app.post("/processes/clear-all")
+async def clear_all_processes():
+    """Dismiss all processes from the registry."""
+    count = len(suspicious_registry)
+    suspicious_registry.clear()
+    log.info(f"Cleared {count} processes from registry.")
+    return {"status": "cleared", "count": count}
 
 class PidAction(BaseModel):
     pid: int
 
 def _validate_pid(pid: int):
+    """Validate PID is safe to act on. Only blocks PID 1-2 and self."""
     if pid <= PROTECTED_MIN_PID:
-        raise HTTPException(status_code=403, detail="Cannot act on system-critical PID.")
+        raise HTTPException(status_code=403, detail=f"Cannot act on system-critical PID {pid}.")
     if pid == os.getpid():
         raise HTTPException(status_code=403, detail="Cannot act on self.")
     try:
         proc = psutil.Process(pid)
-        name = proc.name().lower()
-        for prot in PROTECTED_NAMES:
-            if prot in name:
-                raise HTTPException(status_code=403, detail=f"Protected process: {name}")
         return proc
     except psutil.NoSuchProcess:
-        raise HTTPException(status_code=404, detail="Process not found.")
+        raise HTTPException(status_code=404, detail=f"Process {pid} not found.")
 
 @app.post("/processes/suspend")
 async def suspend_process(body: PidAction):
     proc = _validate_pid(body.pid)
+    name = "?"
     try:
+        name = proc.name()
         proc.suspend()
-        log.warning(f"Process {body.pid} ({proc.name()}) suspended.")
-        return {"status": "suspended", "pid": body.pid}
+        log.warning(f"Process {body.pid} ({name}) suspended.")
+        return {"status": "suspended", "pid": body.pid, "name": name}
+    except psutil.AccessDenied:
+        raise HTTPException(status_code=403, detail=f"Permission denied — '{name}' is owned by another user. Run as root to force.")
+    except psutil.NoSuchProcess:
+        raise HTTPException(status_code=404, detail="Process already terminated.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/processes/kill")
 async def kill_process(body: PidAction):
     proc = _validate_pid(body.pid)
+    name = "?"
     try:
         name = proc.name()
         proc.kill()
+        # Remove from registry if it was flagged
+        suspicious_registry.pop(body.pid, None)
         log.warning(f"Process {body.pid} ({name}) killed.")
-        return {"status": "killed", "pid": body.pid}
+        return {"status": "killed", "pid": body.pid, "name": name}
+    except psutil.AccessDenied:
+        raise HTTPException(status_code=403, detail=f"Permission denied — '{name}' is owned by another user. Run as root to force.")
+    except psutil.NoSuchProcess:
+        raise HTTPException(status_code=404, detail="Process already terminated.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -418,7 +748,7 @@ async def get_timeline(limit: int = 100):
     events = list(timeline_events)[:limit]
     return {"events": events, "count": len(events)}
 
-# ─── Backup Endpoints ────────────────────────────────────────────────────────────
+# ─── Backup Endpoints (Google Cloud Storage) ─────────────────────────────────────
 BACKUP_META_PATH = BACKUPS_DIR / "metadata.json"
 MAX_BACKUP_WARN_BYTES = 100 * 1024 * 1024  # 100 MB
 
@@ -435,9 +765,37 @@ def save_backup_meta(meta: List[Dict]):
     with open(BACKUP_META_PATH, "w") as f:
         json.dump(meta, f, indent=2)
 
+def _gcs_cfg(cfg: Dict) -> tuple:
+    """Returns (enabled, bucket_name, creds_path)"""
+    enabled = cfg.get("gcs_enabled", False)
+    bucket  = cfg.get("gcs_bucket_name", "")
+    creds   = cfg.get("gcs_credentials", "gcs_key.json")
+    # creds path: relative to project root
+    creds_path = PROJECT_ROOT / creds if not Path(creds).is_absolute() else Path(creds)
+    return enabled, bucket, str(creds_path)
+
 @app.get("/backup/list")
 async def backup_list():
-    return {"backups": load_backup_meta()}
+    """Returns local snapshot metadata merged with GCS cloud backups."""
+    cfg = load_config()
+    enabled, bucket, creds_path = _gcs_cfg(cfg)
+    local = load_backup_meta()
+
+    if enabled and bucket:
+        import cloud_storage as cs
+        ok, cloud = cs.list_cloud_backups(bucket, credentials_path=creds_path)
+        if ok:
+            # Merge: mark each as cloud=True
+            for item in cloud:
+                item["cloud"] = True
+                item["id"] = item["object_name"]
+                item["created_at"] = item["updated"]
+                item["source"] = "Cloud (GCS)"
+            for item in local:
+                item["cloud"] = False
+            # Return cloud list only (cloud is authoritative when enabled)
+            return {"backups": cloud, "cloud_enabled": True, "bucket": bucket}
+    return {"backups": local, "cloud_enabled": False}
 
 class BackupCreateRequest(BaseModel):
     path: str
@@ -450,7 +808,6 @@ async def backup_create(body: BackupCreateRequest):
         raise HTTPException(status_code=404, detail=f"Path not found: {body.path}")
 
     try:
-        # Warn if large
         total_size = sum(f.stat().st_size for f in source.rglob("*") if f.is_file())
         warn = total_size > MAX_BACKUP_WARN_BYTES
     except Exception:
@@ -461,6 +818,7 @@ async def backup_create(body: BackupCreateRequest):
     backup_name = body.name or f"snapshot_{ts}"
     zip_path = BACKUPS_DIR / f"{backup_name}.zip"
 
+    # Build the zip locally first
     try:
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
             if source.is_dir():
@@ -475,6 +833,25 @@ async def backup_create(body: BackupCreateRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
     zip_size = zip_path.stat().st_size
+    size_human = f"{zip_size / 1024:.1f} KB" if zip_size < 1024*1024 else f"{zip_size / 1024**2:.2f} MB"
+
+    cfg = load_config()
+    enabled, bucket, creds_path = _gcs_cfg(cfg)
+
+    gcs_uri = None
+    cloud_error = None
+    if enabled and bucket:
+        import cloud_storage as cs
+        ok, result = cs.upload_backup(
+            str(zip_path), bucket, credentials_path=creds_path
+        )
+        if ok:
+            gcs_uri = result
+            log.info(f"Backup uploaded to GCS: {gcs_uri}")
+        else:
+            cloud_error = result
+            log.error(f"GCS upload failed: {cloud_error}")
+
     entry = {
         "id": backup_name,
         "name": backup_name,
@@ -482,37 +859,84 @@ async def backup_create(body: BackupCreateRequest):
         "zip_path": str(zip_path),
         "created_at": datetime.now().isoformat(),
         "size_bytes": zip_size,
-        "size_human": f"{zip_size / 1024:.1f} KB" if zip_size < 1024*1024 else f"{zip_size / 1024 / 1024:.2f} MB",
+        "size_human": size_human,
         "warn_large": warn,
+        "gcs_uri": gcs_uri,
+        "cloud": gcs_uri is not None,
     }
     meta = load_backup_meta()
     meta.insert(0, entry)
     save_backup_meta(meta)
-    log.info(f"Backup created: {backup_name} ({entry['size_human']})")
-    return {"status": "created", "backup": entry}
+    log.info(f"Backup created: {backup_name} ({size_human})")
+    return {"status": "created", "backup": entry, "cloud_error": cloud_error}
 
-@app.post("/backup/restore/{backup_id}")
+@app.post("/backup/restore/{backup_id:path}")
 async def backup_restore(backup_id: str):
-    meta = load_backup_meta()
-    entry = next((b for b in meta if b["id"] == backup_id), None)
-    if not entry:
-        raise HTTPException(status_code=404, detail="Backup not found.")
+    cfg = load_config()
+    enabled, bucket, creds_path = _gcs_cfg(cfg)
 
-    zip_path = Path(entry["zip_path"])
-    if not zip_path.exists():
-        raise HTTPException(status_code=404, detail="Backup zip file missing.")
+    # Try to resolve the backup: could be a GCS object_name or a local id
+    zip_path = None
 
-    restore_dir = Path(entry["source"])
+    if enabled and bucket and "/" in backup_id:
+        # It's a GCS object_name — download first
+        import cloud_storage as cs
+        local_name = Path(backup_id).name
+        dest = BACKUPS_DIR / f"_restore_{local_name}"
+        ok, result = cs.download_backup(
+            backup_id, str(dest), bucket, credentials_path=creds_path
+        )
+        if not ok:
+            raise HTTPException(status_code=502, detail=f"GCS download failed: {result}")
+        zip_path = Path(result)
+    else:
+        # Try local metadata
+        meta = load_backup_meta()
+        entry = next((b for b in meta if b["id"] == backup_id), None)
+        if not entry:
+            raise HTTPException(status_code=404, detail="Backup not found.")
+        zip_path = Path(entry["zip_path"])
+        if not zip_path.exists():
+            raise HTTPException(status_code=404, detail="Backup zip file missing.")
+
+    # Extract
+    restore_dir = BACKUPS_DIR / "restored"
     try:
         restore_dir.mkdir(parents=True, exist_ok=True)
         with zipfile.ZipFile(zip_path, "r") as zf:
-            zf.extractall(restore_dir.parent)
+            zf.extractall(restore_dir)
         log.info(f"Backup restored: {backup_id} → {restore_dir}")
         return {"status": "restored", "path": str(restore_dir)}
     except PermissionError as e:
         raise HTTPException(status_code=403, detail=f"SELinux/permission error: {e}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/backup/cloud/{object_name:path}")
+async def delete_cloud_backup(object_name: str):
+    cfg = load_config()
+    enabled, bucket, creds_path = _gcs_cfg(cfg)
+    if not enabled:
+        raise HTTPException(status_code=400, detail="GCS not enabled.")
+    import cloud_storage as cs
+    ok, msg = cs.delete_cloud_backup(object_name, bucket, credentials_path=creds_path)
+    if not ok:
+        raise HTTPException(status_code=502, detail=msg)
+    return {"status": "deleted", "object": object_name}
+
+@app.get("/backup/gcs-test")
+async def gcs_test():
+    """Test GCS connectivity."""
+    cfg = load_config()
+    enabled, bucket, creds_path = _gcs_cfg(cfg)
+    if not enabled:
+        return {"ok": False, "message": "GCS is disabled in config."}
+    if not bucket:
+        return {"ok": False, "message": "No GCS bucket configured."}
+    import cloud_storage as cs
+    ok, msg = cs.test_connection(bucket, credentials_path=creds_path)
+    return {"ok": ok, "message": msg, "bucket": bucket}
+
 
 # ─── Health ──────────────────────────────────────────────────────────────────────
 @app.get("/health")

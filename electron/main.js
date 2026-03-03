@@ -156,8 +156,50 @@ ipcMain.handle("api-call", async (_event, { method, endpoint, body }) => {
         if (body) {
             req.write(JSON.stringify(body));
         }
-        req.end();
+        req.end();  // ← CRITICAL: without this, the request is never sent
     });
+});
+
+// ─── IPC: Privileged Kill via pkexec ─────────────────────────────────────────────
+// pkexec shows the system PolicyKit password dialog (works on Wayland + X11 on Fedora).
+ipcMain.handle("kill-privileged", (_event, { pid }) => {
+    return new Promise((resolve) => {
+        const pkexec = spawn("pkexec", ["kill", "-9", String(pid)], {
+            stdio: ["ignore", "pipe", "pipe"],
+        });
+        let stderr = "";
+        pkexec.stderr.on("data", (d) => (stderr += d.toString()));
+        pkexec.on("close", (code) => {
+            if (code === 0) {
+                console.log(`[PRIVILEGED] Killed PID ${pid}`);
+                resolve({ ok: true, pid });
+            } else {
+                const errMsg = stderr.trim() || `pkexec exited with code ${code}`;
+                console.error(`[PRIVILEGED] Kill PID ${pid} failed: ${errMsg}`);
+                resolve({ ok: false, error: errMsg });
+            }
+        });
+        pkexec.on("error", (err) => {
+            resolve({ ok: false, error: err.message });
+        });
+    });
+});
+
+
+// ─── IPC: Native Folder Picker ────────────────────────────────────────────────
+ipcMain.handle("select-folder", async () => {
+    try {
+        const result = await dialog.showOpenDialog(mainWindow, {
+            properties: ["openDirectory", "createDirectory"],
+            title: "Select Directory",
+            buttonLabel: "Select Folder",
+        });
+        if (result.canceled || result.filePaths.length === 0) return null;
+        return result.filePaths[0];
+    } catch (err) {
+        console.error("[FolderPicker] Error:", err.message);
+        return null;
+    }
 });
 
 // ─── App Lifecycle ────────────────────────────────────────────────────────────────

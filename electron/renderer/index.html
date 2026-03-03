@@ -56,6 +56,12 @@
         </svg>
         <span>Timeline</span>
       </button>
+      <button class="nav-item" id="nav-ai" data-page="ai">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+        </svg>
+        <span>AI Analyst</span>
+      </button>
       <button class="nav-item" id="nav-settings" data-page="settings">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3" />
@@ -153,62 +159,120 @@
 
     <!-- ═══ PROCESSES PAGE ═══ -->
     <section class="page" id="page-processes">
-      <div class="page-header">
-        <h1 class="page-title">Suspicious Processes</h1>
-        <p class="page-subtitle">Only escalated processes with elevated threat indicators are shown.</p>
+      <div class="page-header"
+        style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+          <h1 class="page-title">Process Manager</h1>
+          <p class="page-subtitle">All running processes. <span style="color:var(--accent);font-weight:700">&#x26A0;
+              Flagged</span> entries are threat-detected — kill or suspend any process directly.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding-top:6px;flex-shrink:0;flex-wrap:wrap">
+          <span class="section-badge" id="proc-registry-count">0 flagged</span>
+          <span style="font-size:12px;color:var(--text-muted)" id="proc-total-count"></span>
+          <button class="btn-sm" id="proc-refresh-btn">Refresh</button>
+          <button class="btn-sm" id="proc-clear-flags-btn">Clear Flags</button>
+        </div>
       </div>
-      <div class="card">
-        <table class="threat-table" id="proc-full-table">
-          <thead>
-            <tr>
-              <th>PID</th>
-              <th>Binary</th>
-              <th>CPU %</th>
-              <th>Risk</th>
-              <th>State</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="proc-full-tbody"></tbody>
-        </table>
-        <div class="table-empty" id="proc-full-empty">No suspicious processes currently detected.</div>
+
+      <!-- Search bar -->
+      <div style="display:flex;gap:12px;margin-bottom:16px;align-items:center;flex-wrap:wrap">
+        <input class="input-field" id="proc-search" type="text" placeholder="Search by name or PID…"
+          style="max-width:300px" />
+        <label
+          style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);cursor:pointer">
+          <input type="checkbox" id="proc-flagged-only" style="accent-color:var(--accent);width:14px;height:14px" />
+          Show flagged only
+        </label>
+      </div>
+
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="overflow-x:auto;max-height:calc(100vh - 280px);overflow-y:auto">
+          <table class="threat-table" id="proc-full-table">
+            <thead style="position:sticky;top:0;background:var(--bg-1);z-index:2">
+              <tr>
+                <th>PID</th>
+                <th>Binary</th>
+                <th>User</th>
+                <th>CPU %</th>
+                <th>Mem</th>
+                <th>Status</th>
+                <th>Threat</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="proc-full-tbody"></tbody>
+          </table>
+          <div class="table-empty" id="proc-full-empty">No processes found.</div>
+        </div>
       </div>
     </section>
 
     <!-- ═══ BACKUPS PAGE ═══ -->
     <section class="page" id="page-backups">
-      <div class="page-header">
-        <h1 class="page-title">Backups &amp; Snapshots</h1>
-        <p class="page-subtitle">Create and restore zip-based directory snapshots.</p>
+      <div class="page-header"
+        style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+          <h1 class="page-title">Cloud Backups</h1>
+          <p class="page-subtitle">Snapshots are zipped locally then uploaded to <strong>Google Cloud Storage</strong>.
+            Restore downloads and extracts directly.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding-top:6px;flex-shrink:0">
+          <span id="gcs-status-badge"
+            style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:rgba(100,100,100,0.2);color:var(--text-muted)">GCS:
+            checking…</span>
+          <button class="btn-sm" id="gcs-test-btn">Test Connection</button>
+        </div>
       </div>
 
+      <!-- GCS info bar -->
+      <div id="gcs-info-bar"
+        style="background:rgba(141,92,252,0.08);border:1px solid rgba(141,92,252,0.2);border-radius:10px;padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--text-muted)">
+          ☁ Bucket: <code id="gcs-bucket-label" style="color:#8D5CFC">—</code>
+        </span>
+        <span style="font-size:12px;color:var(--text-muted)" id="gcs-location-label"></span>
+      </div>
+
+      <!-- Create snapshot card -->
       <div class="card backup-create-card">
-        <div class="section-title">Create Manual Snapshot</div>
+        <div class="section-title">Create &amp; Upload Snapshot</div>
         <div class="backup-input-row">
-          <input class="input-field" id="backup-path-input" type="text" placeholder="/home/mohit/TestingDirectory" />
+          <div style="display:flex;gap:6px;flex:1;min-width:0">
+            <input class="input-field" id="backup-path-input" type="text" placeholder="/home/mohit/TestingDirectory"
+              style="flex:1" />
+            <button id="backup-browse-btn" title="Browse for folder"
+              style="padding:0 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:var(--text-primary);cursor:pointer;font-size:16px;flex-shrink:0;transition:background 0.2s"
+              onmouseover="this.style.background='rgba(141,92,252,0.15)'"
+              onmouseout="this.style.background='rgba(255,255,255,0.06)'">📁</button>
+          </div>
           <input class="input-field backup-name-input" id="backup-name-input" type="text"
-            placeholder="Optional name..." />
+            placeholder="Snapshot name (optional)" />
           <button class="btn-primary" id="backup-create-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
+              <polyline points="16 16 12 12 8 16" />
+              <line x1="12" y1="12" x2="12" y2="21" />
+              <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3" />
             </svg>
-            Snapshot Now
+            Snapshot &amp; Upload
           </button>
         </div>
         <div class="backup-status" id="backup-status"></div>
       </div>
 
+      <!-- Cloud backup list -->
       <div class="card">
         <div class="section-header">
-          <span class="section-title">Available Snapshots</span>
-          <button class="btn-sm" id="backup-refresh-btn">Refresh</button>
+          <span class="section-title">CLOUD SNAPSHOTS</span>
+          <div style="display:flex;gap:8px">
+            <span style="font-size:11px;color:var(--text-muted);align-self:center" id="backup-count-label"></span>
+            <button class="btn-sm" id="backup-refresh-btn">Refresh</button>
+          </div>
         </div>
         <div id="backup-list" class="backup-list"></div>
-        <div class="table-empty" id="backup-empty">No snapshots available.</div>
+        <div class="table-empty" id="backup-empty">No cloud snapshots found. Create a snapshot to get started.</div>
       </div>
 
+      <!-- Operation log -->
       <div class="card">
         <div class="section-title">Operation Log</div>
         <div class="audit-log" id="backup-log">
@@ -231,6 +295,95 @@
     </section>
 
     <!-- ═══ SETTINGS PAGE ═══ -->
+    <!-- ═══ AI ANALYST PAGE ═══ -->
+    <section class="page" id="page-ai">
+      <div class="page-header"
+        style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+        <div>
+          <h1 class="page-title">AI Analyst <span style="font-size:14px;color:#8D5CFC;font-weight:500">Gemini 2.0
+              Flash</span></h1>
+          <p class="page-subtitle">Gemini automatically analyzes threats and provides behavioral verdicts for every
+            process.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding-top:6px">
+          <span id="ai-status-dot"
+            style="width:9px;height:9px;border-radius:50%;background:#555;display:inline-block"></span>
+          <span id="ai-status-label" style="font-size:12px;color:var(--text-muted)">Checking…</span>
+        </div>
+      </div>
+
+      <!-- Verdict feed -->
+      <div class="card">
+        <div class="section-header">
+          <span class="section-title">THREAT VERDICTS</span>
+          <div style="display:flex;gap:8px">
+            <span id="ai-verdict-count" style="font-size:11px;color:var(--text-muted);align-self:center"></span>
+            <button class="btn-sm" id="ai-refresh-btn">Refresh</button>
+          </div>
+        </div>
+        <div id="ai-verdict-feed"
+          style="display:flex;flex-direction:column;gap:10px;max-height:360px;overflow-y:auto;padding-right:4px"></div>
+        <div class="table-empty" id="ai-verdict-empty">No AI verdicts yet. Start monitoring — Gemini will analyze any
+          threats automatically.</div>
+      </div>
+
+      <!-- Per-process analyzer -->
+      <div class="card">
+        <div class="section-title">ANALYZE A PROCESS</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">Enter a PID to get an instant Gemini
+          verdict — even for benign processes like Python scripts.</p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <input class="input-field" id="ai-pid-input" type="number" placeholder="PID (e.g. 1234)"
+            style="width:180px" />
+          <button class="btn-primary" id="ai-analyze-pid-btn" style="padding:10px 20px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            Analyze
+          </button>
+          <span id="ai-pid-status" style="font-size:12px;color:var(--text-muted)"></span>
+        </div>
+        <div id="ai-process-result" style="margin-top:14px"></div>
+      </div>
+
+      <!-- Incident summary -->
+      <div class="card">
+        <div class="section-title">INCIDENT REPORT</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px">Generate a full markdown incident summary
+          from the current session's events and AI verdicts.</p>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px">
+          <button class="btn-primary" id="ai-summary-btn" style="padding:10px 22px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+              <polyline points="10 9 9 9 8 9" />
+            </svg>
+            Generate Report
+          </button>
+          <button class="btn-sm" id="ai-copy-summary-btn" style="display:none">Copy Markdown</button>
+          <span id="ai-summary-status" style="font-size:12px;color:var(--text-muted)"></span>
+        </div>
+        <div id="ai-summary-output" style="
+          display:none;
+          background:rgba(0,0,0,0.3);
+          border:1px solid rgba(255,255,255,0.07);
+          border-radius:10px;
+          padding:18px 20px;
+          font-size:13px;
+          line-height:1.7;
+          color:var(--text-secondary);
+          white-space:pre-wrap;
+          font-family:'Inter',sans-serif;
+          max-height:480px;
+          overflow-y:auto;
+        "></div>
+      </div>
+    </section>
+
+    <!-- ═══ SETTINGS PAGE ═══ -->
     <section class="page" id="page-settings">
       <div class="page-header">
         <h1 class="page-title">Settings</h1>
@@ -239,7 +392,14 @@
       <div class="card settings-card">
         <div class="setting-group">
           <label class="setting-label" for="s-monitor-path">Monitor Path</label>
-          <input class="input-field" id="s-monitor-path" type="text" placeholder="/home/mohit/TestingDirectory" />
+          <div style="display:flex;gap:6px">
+            <input class="input-field" id="s-monitor-path" type="text" placeholder="/home/mohit/TestingDirectory"
+              style="flex:1" />
+            <button id="settings-browse-btn" title="Browse for folder"
+              style="padding:0 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);color:var(--text-primary);cursor:pointer;font-size:16px;flex-shrink:0;transition:background 0.2s"
+              onmouseover="this.style.background='rgba(141,92,252,0.15)'"
+              onmouseout="this.style.background='rgba(255,255,255,0.06)'">📁</button>
+          </div>
           <span class="setting-hint">Directory to watch for ransomware behavior. Auto-created if missing.</span>
         </div>
         <div class="setting-group">
